@@ -1,0 +1,124 @@
+# ====================
+# | Model parameters |
+# ====================
+#
+# Continuous equation parameters
+ &PARM01
+ Tref = 220*1.0,
+ Sref = 220*34.8,
+# viscAhGridMax=0.25,
+# viscC2Leith=1,
+# viscC2LeithD=1,
+# ViscA4Gridmax=0.1, 
+# ViscC4Leith=0.1,
+# ViscC4LeithD=0.1,
+ viscAz=1.E-15,
+ viscAh=15.0,
+ viscA4=2.5,
+ no_slip_sides=.false.,
+ no_slip_bottom=.false.,
+ diffKhT=1.0,
+ diffKzT=1.e-15,
+ diffKhS=1.0,
+ diffKzS=1.e-15,
+ bottomDragQuadratic=2.5E-3,
+ eosType='MDJWF', 
+ HeatCapacity_cp = 3974.0,
+ rhoConst=1030.,
+ rhoNil=1030.,
+ gravity=9.81,
+ f0=-1.4074E-4,
+ beta=0.0,
+ convertFW2Salt = 33.4,
+ rigidLid=.FALSE.,
+ implicitFreeSurface=.TRUE.,
+ exactConserv=.TRUE.,
+ hFacMin=0.05,
+ nonHydrostatic=.false.,
+ readBinaryPrec=64,
+ useSingleCPUio = .true.,
+ tempAdvScheme=33,
+ saltAdvScheme=33,
+ staggerTimeStep=.true.,
+ implicitViscosity=.true.,
+ implicitDiffusion=.true.,
+# useCDScheme = .TRUE.,
+ /
+
+# Elliptic solver parameters
+ &PARM02
+ cg2dMaxIters=1000,
+ cg2dTargetResidual=1.E-13,
+ cg3dMaxIters=400,
+ cg3dTargetResidual=1.E-13,
+ /
+
+# Time stepping parameters
+ &PARM03
+#
+ niter0=0,
+# 1 hour
+# endTime=3600.0, 
+# 1 day
+# endTime=86400.0,
+# 5 days
+# endTime=432000.0,
+# 10 days
+# endTime=864000.0,
+# 30 days
+# endTime=2592000.0,
+# 90 days
+# endTime=7776000.0,
+# 180 days
+# endTime=15552000.0,
+# 360 days
+ endTime=31104000.0,
+# 2*360 days
+# endTime=62208000.0,
+# 5*360 days
+# endTime=155520000.0,
+# 10*360 days
+# endTime=311040000.0,
+# 60*360 days
+# endTime=1866240000.0,
+#
+ deltaT=7.5,
+ abEps=0.1,
+ cAdjFreq = 0,
+
+ pChkptFreq=432000.0,
+ pickupStrictlyMatch=.TRUE.,
+# pickupSuff='ckptA',
+# 1 day
+# chkptFreq=86400.0,
+# 30 days
+ chkptFreq=432000.0,
+#
+ dumpFreq=0.0,
+ dumpInitAndLast=.FALSE.,
+ taveFreq=0.0,
+# delta T
+# monitorFreq=3600.,
+# 30 days
+ monitorFreq=2592000.,
+ monitorSelect=1,
+ /
+
+# Gridding parameters
+ &PARM04
+ usingCartesianGrid=.TRUE.,
+ ygOrigin = 1.62E6,
+ xgOrigin = 0.0,
+ delX=120*350,
+ delY=320*400,
+ delZ=220*5.0,
+ /
+
+# Input datasets
+ &PARM05
+ bathyFile='bathymetry.shice',
+ hydrogThetaFile='lev_t_dzT_0_dzS_0_nz220.shice',
+ hydrogSaltFile='lev_s_dzT_0_dzS_0_nz220.shice',
+# checkIniTemp=.false.,
+# checkIniSalt=.false.,
+/

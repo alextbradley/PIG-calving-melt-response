@@ -1,0 +1,21 @@
+&RBCS_PARM01
+ useRBCtemp=.true.,
+ useRBCsalt=.true.,
+# useRBCuVel=.true.,
+# useRBCvVel=.true.,
+ tauRelaxT = 43200.,
+ tauRelaxS = 43200.,
+# tauRelaxU = 43200.,
+# tauRelaxV = 43200.,
+ relaxMaskFile(1) = 'RBCt_mask_nz220.bin',
+ relaxMaskFile(2) = 'RBCs_mask_nz220.bin',
+# relaxMaskUFile = 'RBCu_mask.bin',
+# relaxMaskVFile = 'RBCv_mask.bin',
+ relaxTFile = 'RBCt_dzT_0_dzS_0_nz220.bin',
+ relaxSFile = 'RBCs_dzT_0_dzS_0_nz220.bin',
+# relaxUFile = 'RBCu.bin',
+# relaxVFile = 'RBCv.bin',
+/
+
+&RBCS_PARM02
+/

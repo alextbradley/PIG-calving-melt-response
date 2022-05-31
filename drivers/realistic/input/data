@@ -1,0 +1,125 @@
+# ====================
+# | Model parameters |
+# ====================
+#
+# Continuous equation parameters
+ &PARM01
+ Tref = 110*1.0,
+ Sref = 110*34.8,
+ viscAz=1.E-15,
+ viscAh=15.0,
+ viscA4=2.5,
+ diffKhT=1.0,
+ diffKzT=1.E-15,
+ diffKhS=1.0,
+ diffKzS=1.E-15,
+ bottomDragQuadratic=2.5E-3,
+ eosType = 'MDJWF', 
+ rhoNil=1030.0,
+ HeatCapacity_cp = 3974.0,
+ rhoConst=1030.,
+ gravity=9.81,
+# convertFW2Salt = -1,
+#
+ selectCoriMap=0,
+ f0=-1.4074e-4,
+ convertFW2Salt = 33.4,
+ beta=0.0,
+ no_slip_sides=.FALSE.,
+ no_slip_bottom=.FALSE.,
+ implicitDiffusion = .TRUE.,
+ implicitViscosity = .TRUE.,
+ rigidLid=.FALSE.,
+ implicitFreeSurface=.TRUE.,
+ nonlinFreeSurf=4,
+ exactConserv=.TRUE.,
+ useCDScheme = .FALSE.,
+ nonHydrostatic=.FALSE.,
+# hFacMin=0.10,
+ hFacMin=0.05,
+ staggerTimeStep = .TRUE.,
+ tempAdvScheme = 33,
+ saltAdvScheme = 33,
+ useSingleCPUio = .TRUE.,
+ readBinaryPrec=64,
+ &
+
+# Elliptic solver parameters
+ &PARM02
+ cg2dMaxIters=1000,
+ cg2dTargetResidual=1.E-13,
+ cg3dMaxIters=400,
+ cg3dTargetResidual=1.E-13,
+ &
+
+# Time stepping parameters
+ &PARM03
+#
+ niter0=0,
+# 1 day
+# endTime=86400.0,
+# 5 days
+# endTime=432000.0,
+# 10 days
+# endTime=864000.0,
+# 30 days
+# endTime=2592000.0,
+# 90 days
+# endTime=7776000.0,
+# 180 days
+# endTime=15552000.0,
+# 360 days
+ endTime=31104000.0,
+# 2*360 days
+# endTime=62208000.0,
+# 5*360 days
+# endTime=155520000.0,
+# 10*360 days
+# endTime=311040000.0,
+# 60*360 days
+# endTime=1866240000.0,
+#
+ deltaT=30.0,
+ abEps=0.1,
+ cAdjFreq = 0, 
+# tauCD = 400000.,
+#
+ pChkptFreq=2592000.0,
+ pickupStrictlyMatch=.TRUE.,
+# pickupSuff='ckptA',
+# 1 day
+# chkptFreq=86400.0,
+# 30 days
+ chkptFreq=2592000.0,
+#
+ dumpFreq=0.0,
+ dumpInitAndLast=.FALSE.,
+ taveFreq=0.0,
+# delta T
+# monitorFreq=3600.,
+# 30 days
+ monitorFreq=2592000.,
+ monitorSelect=1,
+ &
+
+# Gridding parameters
+ &PARM04
+ usingCartesianGrid=.TRUE.,
+ usingSphericalPolarGrid=.FALSE.,
+ delX=360*400,
+ delY=320*400,
+ delZ=120*10.0,
+ xgOrigin = -83499.4353,
+ ygOrigin = 1608376.3083,
+ &
+
+# Input datasets
+ &PARM05
+ bathyFile='bathymetry.shice',
+# 2009 boundary conditions
+ hydrogThetaFile='lev_t2009.shice',
+ hydrogSaltFile='lev_s2009.shice',
+# 2012 boundary conditions
+# hydrogThetaFile='lev_t2012.shice',
+# hydrogSaltFile='lev_s2012.shice',
+ &

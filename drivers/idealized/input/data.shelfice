@@ -1,0 +1,24 @@
+# ===================================
+# | Parameters for SHELFICE package |
+# ===================================
+ &SHELFICE_PARM01
+#
+ SHELFICEtopoFile = 'shelfice_topo_H400_W100_extent70km.bin',
+ SHELFICEloadAnomalyFile = 'pload_H400_W100_extent70km.mdjwf',
+ SHELFICEwriteState = .TRUE.,
+#
+ SHELFICEconserve = .TRUE.,
+ SHELFICEboundaryLayer = .TRUE.,
+ useISOMIPTD = .FALSE.,
+ SHELFICEuseGammaFrict = .TRUE.,
+ SHELFICEadvDiffHeatFlux = .TRUE.,
+#
+ shiCdrag = 4.5E-3,
+ SHELFICEthetaSurface = -20.0,
+#
+ no_slip_shelfice = .FALSE.,
+ SHELFICEDragQuadratic = 2.5E-3,
+ SHELFICEDragLinear = 0.0,
+#
+ /
+

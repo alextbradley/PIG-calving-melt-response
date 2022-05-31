@@ -1,0 +1,25 @@
+&RBCS_PARM01
+ useRBCtemp=.true.,
+ useRBCsalt=.true.,
+# useRBCuVel=.true.,
+# useRBCvVel=.true.,
+ tauRelaxT = 43200.,
+ tauRelaxS = 43200.,
+# tauRelaxU = 43200.,
+# tauRelaxV = 43200.,
+ relaxMaskFile(1) = 'RBCt_mask.bin',
+ relaxMaskFile(2) = 'RBCs_mask.bin',
+# relaxMaskUFile = 'RBCu_mask.bin',
+# relaxMaskVFile = 'RBCv_mask.bin',
+## 2009 salnitiy and temperatrue bc, 
+ relaxTFile = 'RBCt2009.bin',
+ relaxSFile = 'RBCs2009.bin',
+## 2012 salinity and temperature bc,
+# relaxTFile = 'RBCt2012.bin',
+# relaxSFile = 'RBCs2012.bin',
+# relaxUFile = 'RBCu.bin',
+# relaxVFile = 'RBCv.bin',
+/
+
+&RBCS_PARM02
+/
