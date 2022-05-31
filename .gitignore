@@ -1,0 +1,10 @@
+*.data
+*.meta
+*.mdjwf
+STDOUT*
+STDERR*
+*.out
+*.png
+*.pdf
+*.idraw
+*.tif
