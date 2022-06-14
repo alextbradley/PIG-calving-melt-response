@@ -1,7 +1,10 @@
 %Make figure 3 in the Idealized PIG calving manuscript: results from the default run.
 %(a) Plot of melt rate with boundary current overlain
-%(b) Plot of the water column thickness with barotropic stream function overlain
-%(c) Plot of the bottom temperature with bottom current overlain
+%(b) Plot the bottom temperature with the bottom current overlain
+%(c) Plot of the water column thickness with barotropic stream function overlain
+%(d) Plot of the barotropic potential vorticity with barotropic stream function overlain
+%(e) Zonal cross section of temperature near the GL with 34.2, 34.4, 34.6 salinity contours 
+%(f) Meridional cross section of temperature along centre of the domain with 34.2, 34.4, 34.6 salinity contours.
 %
 % NB: Many of the data files referred to in this script are too large to be hosted online. These files are hosted internally as BAS.
 % Please email Alex Bradley (aleey@bas.ac.uk) to obtain a copy.
@@ -21,12 +24,12 @@ plot_defaults
 label_size = 11;
 ax_fontsize = 10;
 figure(1); clf;
-fig = gcf; fig.Position(3:4) = [1085, 540];
+fig = gcf; fig.Position(3:4) = [900,900];
 NS_idx = 60; %index of line running North south
 EW_idx = 50; %index of line running east west
 
 % Data locations
-rootdir = '/data/oceans_output/shelf/aleey/mitgcm/APIGi_'; %not in git repo
+rootdir = '/data/oceans_output/shelf/aleey/mitgcm/APIGi/APIGi_'; %not in git repo
 topodir = '../gendata/topo_files/';
 bathy_path = '../gendata/bathy_files/bathymetry_H400.shice';
 
@@ -195,21 +198,25 @@ BPV = (f + zeta) ./ H;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Plots %%%%%%%%%%%%%%%%%%%%%%%
-width = 0.11;
-widthsect = 0.25;
-gap = 0.025;
-startx = (1 - 5*width - 4*gap)/2 - 0.05;
-startx = 0.05 ; %
-starty = 0.085;
-height = 0.8;
-heightsmall = 0.35; 
+% generate plot positions, starting with top four
+width     = 0.20;
+gap       = 0.04;
+startx    = 0.07;
+starty    = 0.4;
+height    = 0.5;
 positions = [startx, starty, width, height;
 	     startx + gap + width, starty, width, height;
 	     startx + 2*gap + 2*width, starty, width, height;
-	     startx + 3*gap + 3*width, starty, width, height;
-	     startx + 4*gap + 4*width + 0.05, starty, widthsect, heightsmall;
-	     startx + 4*gap + 4*width + 0.05, starty + height/2+0.045, widthsect, heightsmall];
+	     startx + 3*gap + 3*width, starty, width, height];
 	    
+width2 = 0.4;
+height2 = 0.25; 
+start2 = 0.08;
+gap2  = 0.1;
+positions = [positions;
+	    start2, start2, width2, height2;
+	    start2 + width2 + gap2, start2, width2, height2]; 
+
 %
 % Plot 1: Melt rate and BL velocities
 %
@@ -231,18 +238,18 @@ plot(X/1e3, Y(EW_idx)*ones(length(X))/1e3, 'w', 'linewidth', 1.5)
 plot(X(NS_idx)*ones(1,230)/1e3, Y(1:230)/1e3, 'm--', 'linewidth', 1.5);
 
 %colorbar and arrow
-A = colorbar;
-A.Location = 'northoutside';
-A.Label.String = 'melt rate (m/yr)';
-A.Label.Interpreter = 'latex';
-A.Position(end) = 0.02;%A.Position(end) - 0.02;
-A.Position(2) = 0.89;
-A.Label.FontSize = 11;
+cbar(1) = colorbar;
+cbar(1).Location = 'northoutside';
+cbar(1).Label.String = 'melt rate (m/yr)';
+cbar(1).Label.Interpreter = 'latex';
+cbar(1).Position(end) = 0.01;
+cbar(1).Position(2) = 0.92;
+cbar(1).Label.FontSize = 11;
 %plot([20, 30], [120,120], 'k', 'linewidth', 1);
 %text(31, 120, '0.6 m/s')
 xlabel('$x$~(km)', 'Interpreter', 'latex', 'FontSize' ,12);
 ylabel('$y$~(km)', 'Interpreter', 'latex', 'FontSize' ,12)
-text(-10,141, '(a)', 'Interpreter', 'latex', 'FontSize',  12)
+txt(1) = text(-8,130, '(a)', 'Interpreter', 'latex', 'FontSize',  12);
 
 %
 % Plot 2: Bottom temp
@@ -255,18 +262,18 @@ cmap = lighter_blue_parula(100,0.2);
 colormap(ax(2), cmap);
 
 plot(X/1e3, 50*ones(length(X), 1), 'w--', 'linewidth', 1.5)
-b = colorbar;
-b.Location = 'northoutside';
-b.Position(end) = 0.02; %b.Position(end) - 0.02;
-b.Position(2) = 0.89;%b.Position(2) + 0.03;
-b.Label.String = 'Bottom temp~(${}^\circ$C)';
-b.Label.Interpreter = 'latex';
-b.Label.FontSize = 11;
+cbar(2) = colorbar;
+cbar(2).Location = 'northoutside';
+cbar(2).Position(end) = 0.01;
+cbar(2).Position(2) = 0.92;
+cbar(2).Label.String = 'Bottom temp~(${}^\circ$C)';
+cbar(2).Label.Interpreter = 'latex';
+cbar(2).Label.FontSize = 11;
 yticks([])
 quiver(XX(idxY, idxX),YY(idxY, idxX),velscale *Ubot(idxX, idxY)', velscale*Vbot(idxX, idxY)', 'autoscale', 'off', 'color', 'k')
 xlabel('$x$~(km)', 'Interpreter', 'latex', 'FontSize' ,12);
 
-text(-10,141, '(b)', 'Interpreter', 'latex', 'FontSize',  12)
+txt(2) = text(-8,130, '(b)', 'Interpreter', 'latex', 'FontSize',  12);
 
 %
 % Plot 3: 1/h and BSF contours
@@ -277,16 +284,16 @@ column_thickness = topo - bathy;
 plot(X/1e3, 50*ones(length(X), 1), 'w--', 'linewidth', 1.5)
 contourf(X/1e3,Y/1e3,1e3* (1./column_thickness)', 20, 'linestyle', 'none');
 colormap(ax(3), cmap);
-a = colorbar;
-a.Location = 'northoutside';
-a.Position(end) = 0.02;%a.Position(end) - 0.02;
-a.Position(2) = 0.89;%a.Position(2) + 0.03;
-a.Label.Interpreter = 'latex';
-a.Label.String = '$1/h~(10^{-3}~\mathrm{m}^{-1})$';
-a.Label.FontSize = 11;
+cbar(3) = colorbar;
+cbar(3).Location = 'northoutside';
+cbar(3).Position(end) = 0.01;
+cbar(3).Position(2) = 0.92;
+cbar(3).Label.Interpreter = 'latex';
+cbar(3).Label.String = '$1/h~(10^{-3}~\mathrm{m}^{-1})$';
+cbar(3).Label.FontSize = 11;
 yticks([])
 xlabel('$x$~(km)', 'Interpreter', 'latex', 'FontSize' ,12);
-text(-10,141, '(c)', 'Interpreter', 'latex', 'FontSize',  12)
+txt(3) =text(-8,130, '(c)', 'Interpreter', 'latex', 'FontSize',  12);
 
 %add bsf
 streamsm = smooth2a(stream, 2,2);
@@ -303,6 +310,7 @@ clabel(C,h);
 
 xticks([]);
 yticks([]);
+axnew.YTick = ax(1).YTick;
 set(axnew, 'color', 'none')
 
 
@@ -313,17 +321,17 @@ ax(4) = subplot('Position', positions(4,:)); hold on; box on
 ax(4).FontSize = 10;
 contourf(X/1e3, Y/1e3,1e7* BPV', 20, 'linestyle', 'none'); 
 colormap(ax(4), cmap);
-cc = colorbar;
-cc.Location = 'northoutside';
-cc.Position(end) = 0.02; %b.Position(end) - 0.02;
-cc.Position(2) = 0.89;%b.Position(2) + 0.03;
-cc.Label.String = '$10^{7}\times[(f + \zeta )/ h]$';
-cc.Label.Interpreter = 'latex';
-cc.Label.FontSize = 11;
+cbar(4) = colorbar;
+cbar(4).Location = 'northoutside';
+cbar(4).Position(end) = 0.01;
+cbar(4).Position(2) = 0.92;
+cbar(4).Label.String = '$10^{7}\times[(f + \zeta )/ h]$';
+cbar(4).Label.Interpreter = 'latex';
+cbar(4).Label.FontSize = 11;
 yticks([])
 ax(4).XTick = [0,20,40];
 xlabel('$x$~(km)', 'Interpreter', 'latex', 'FontSize' ,12);
-text(-10,141, '(d)', 'Interpreter', 'latex', 'FontSize',  12)
+txt(4) = text(-8,130, '(d)', 'Interpreter', 'latex', 'FontSize',  12);
 
 %add bsf contours
 axnew = axes;
@@ -344,7 +352,7 @@ set(axnew, 'color', 'none')
 %
 % Plot 5: meridional cross section
 %
-ax(5) = subplot('Position', positions(5,:)); hold on; box on;
+ax(5) = subplot('Position', positions(6,:)); hold on; box on;
 ax(5).FontSize = 10;
 SMS = squeeze(Salt(EW_idx, :,:));
 TMS = squeeze(Theta(EW_idx, :, :));
@@ -371,15 +379,12 @@ xlim([4*1e4, Y(end)]/1e3)
 ylim([-1100,-300])
 ylabel('depth (m)', 'Interpreter', 'latex', 'FontSize', 12);
 xlabel('$y$~(km)', 'Interpreter', 'latex', 'FontSize' ,12);
-c = colorbar;
-c.Location = 'north';
-c.Position(1) = positions(5,1) + 0.02;
-c.Position(3) = widthsect - 0.04;
-c.Position(4) = 0.02;
-c.Position(2) = 0.4;
-c.Label.String = '$\Theta$~(${}^\circ$C)';
-c.Label.Interpreter = 'latex';
-c.Label.FontSize = 11;
+cbar(5) = colorbar;
+cbar(5).Location = 'north';
+cbar(5).Position = [0.65, 0.27, 0.3,0.01];
+cbar(5).Label.String = '$\Theta$~(${}^\circ$C)';
+cbar(5).Label.Interpreter = 'latex';
+cbar(5).Label.FontSize = 11;
 %plot((max(Y)/1e3 - 20)*[1,1], [bathy(3,NS_idx),topo(3,NS_idx_idx)], 'm--', 'linewidth', 1.5)
 
 
@@ -393,16 +398,17 @@ yticks([]);
 set(axnew, 'color', 'none')
 xlim([4*1e4, Y(end)]/1e3)
 ylim([-1100,-300])
+ax(5).YTick = -1000:200:-400;
 %shift labels because we plotted in reverse
 ax(5).XTick = max(Y)/1e3 - (80:-20:0);
 ax(5).XTickLabels = {"80", "60","40", "20", "0"};
 
-text(18,-300, '(f)', 'Interpreter', 'latex', 'FontSize',  12)
+txt(5) = text(30,-280, '(f)', 'Interpreter', 'latex', 'FontSize',  12);
 
 %
-% Plot 6
+% Plot (e): zonal cross section of temperature and salinity
 % 
-ax(6) = subplot('Position', positions(6,:)); hold on; box on;
+ax(6) = subplot('Position', positions(5,:)); hold on; box on;
 ax(6).FontSize = 10;
 SZS = squeeze(Salt(:, NS_idx,:));
 TZS = squeeze(Theta(:, NS_idx, :));
@@ -424,15 +430,18 @@ colormap(ax(6), cmap);
 hold on
 ylabel('depth (m)', 'Interpreter', 'latex', 'FontSize', 12);
 xlabel('$x$~(km)', 'Interpreter', 'latex', 'FontSize' ,12);
-d = colorbar;
-d.Location = 'northoutside';
-d.Position(1) = positions(5,1) + 0.02;
-d.Position(2) = 0.89;
-d.Label.String = '$\Theta$~(${}^\circ$C)';
-d.Label.Interpreter = 'latex';
-d.Label.FontSize = 11;
-d.Position(3) = widthsect - 0.04;
-d.Position(4) = 0.02;
+% colourbar not needed for (e)
+%cbar(6) = colorbar;
+%cbar(6).Location = 'northoutside';
+%cbar(6).Position(1) = positions(5,1) + 0.02;
+%cbar(6).Position(2) = 0.89;
+%cbar(6).Label.String = '$\Theta$~(${}^\circ$C)';
+%cbar(6).Label.Interpreter = 'latex';
+%cbar(6).Label.FontSize = 11;
+%cbar(6).Position(3) = widthsect - 0.04;
+%cbar(6).Position(4) = 0.02;
+
+ax(6).YTick = -1050:100:-750;
 ylim([bathy(3,NS_idx),topo(3,NS_idx)])
 axnew = axes;
 axnew.Position = ax(6).Position;
@@ -444,7 +453,7 @@ yticks([]);
 set(axnew, 'color', 'none')
 ylim([bathy(3,NS_idx),topo(3,NS_idx)])
 
-txte = text(-12,-600, '(e)', 'Interpreter', 'latex', 'FontSize',  12);
+txt(6) = text(-4,-680, '(e)', 'Interpreter', 'latex', 'FontSize',  12);
 
 %
 % Save
