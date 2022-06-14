@@ -1,5 +1,6 @@
 %Make figure 2 in the manuscript: schematic of the shelf geometry and hydrographic conditions
-%Alex Bradley (aleey@bas.ac.uk), 21/05/2021
+%Alex Bradley (aleey@bas.ac.uk), 21/05/2021, MIT Licence
+
 
 %
 % Flags
@@ -15,12 +16,20 @@ fig = figure(1); clf;
 fig.Position(3:4) = [900, 420];
 label_size = 12;
 ax_fontsize = 12;
+
+
 %
-% schematic of ice shelf geometry
+% (a) Schematic of ice shelf geometry
 %
-yy = 0:400:(319*400);
+
+%grid
+nx  = 320;
+dx  = 400;
+yy  = 0:dx:((nx-1)*dx); 
 yyf = max(yy) - yy;
-[~, idx] = min(abs(yy - 84*1e3));
+[~, idx] = min(abs(yy - 84*1e3)); %ice front index
+
+%generate ice topo profiles
 H = [100, 150, 200];
 linestyles = ["-","--", "--"];
 h_profiles = zeros(3, length(yy));
@@ -29,9 +38,10 @@ h_profiles(i,:)=(310 + H(i))/2.64*atan(0.17*yy/1000 - 3) + 0.47*(H(i)+400) - 105
 h_profiles(i, idx+1:end) = nan;
 end
 
+%make plot
 pos = [0.1, 0.12, 0.5, 0.82];
 p0 = subplot('Position', pos); box on; hold on
-for i = 1:3
+for i = 1:3 %loop over H values
 if i == 1
 %add inner cavity definition
 X = 98:128;
@@ -57,7 +67,7 @@ end
 else
 plot((max(yy) - yy)/1e3, h_profiles(i,:), 'k', 'linestyle', linestyles(i))
 end
-end
+end %end loop over h values
 
 %add the ridge
 fillX = [yy, flip(yy)]/1e3;
@@ -98,21 +108,19 @@ text(25,-530, "W = 150", 'FontSize', 11, 'Interpreter', 'latex')
 %tw = text(128 - 56, -655, "W", 'FontSize', 11, 'Interpreter', 'latex');
 
 
-
 %sort out the ticks, which are the wrong way round
 p0.XTick = flip(128 - (20:20:120));
 p0.XTickLabel = {'120', '100', '80', '60', '40', '20'};
 
 
 %
-% salinity and temperature profiles
+% (b) and (c) salinity and temperature profiles
 %
-pos_t = [0.62, 0.12, 0.17, 0.82];
+pos_t = [0.62, 0.12, 0.17, 0.82]; %subplot positions
 pos_s = [0.80, 0.12, 0.17, 0.82];
 p1 = subplot('Position',pos_t); box on; hold on; grid on
 p2 = subplot('Position',pos_s); box on; hold on; grid on
 depth = 0:10:1110;
-
 P = [600, 700. 800];
 linestyles = ["-", "--", "-."];
 
@@ -125,7 +133,7 @@ load('./data/TS_2012.mat', "Z", "T2012","S2012");
 plot(p1, T2012, Z, 'color', ones(3,1)*0.5)
 plot(p2, S2012, Z, 'color', ones(3,1)*0.5)
 
-for i = 1:3
+for i = 1:3 %for each P value
 [t_prof, s_prof] = TS_profile(depth,-1100,P(i) - 600, P(i)-600); %send and third arguments are offset from 600
 
 plot(p1, t_prof,-depth(1:end-1), 'r', 'linestyle', linestyles(i), 'linewidth', 1.5);
@@ -133,10 +141,7 @@ axes(p1); txt =  text(0, -P(i) + 190, strcat("P = " ,num2str(P(i))), 'Color', 'r
 
 plot(p2,s_prof, -depth(1:end-1), 'b', 'linestyle', linestyles(i), 'linewidth', 1.5);
 axes(p2); txt =  text(34.3, -P(i) + 200, strcat("P = " ,num2str(P(i))), 'Color', 'b', 'Rotation', -45, 'interpreter', 'latex');
-end
-
-
-
+end %end loop over P values
 
 %tidy up
 p1.XLim = [-1.2, 1.4]; 
@@ -172,5 +177,5 @@ text(p2, 34.653, -40, "(c)", 'FontSize', 12, 'Interpreter', 'latex')
 %
 if save_flag 
 %saveas(gcf, "plots/figure2", 'epsc')
-saveas(gcf, "plots/figure2.png")
+%saveas(gcf, "plots/figure2.png")
 end
