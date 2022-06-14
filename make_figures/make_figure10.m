@@ -1,4 +1,6 @@
 %Make figure 10 of the PIG calving manuscript: description of calving experiments
+% (a) Satellite image of PIG with grounding line, 2009, 2012 ice fronts, synthetic ice fronts and north south cavities labelled. Inset: ice-bathy gap along dashed line in main figure.
+% (b) Satellite image of PIG with cavity water column thickness in colours.
 
 % NB: Many of the data files referred to in this script are too large to be hosted online. These files are hosted internally as BAS.
 % Please email Alex Bradley (aleey@bas.ac.uk) to obtain a copy.
@@ -13,7 +15,7 @@ plotcolor3 = [1,0,1];
 %
 topodir = '../gendata_realistic/topo_files/';
 bathypath = '../gendata_realistic/bathy_files/bathymetry.shice';
-rootdir = '/data/oceans_output/shelf/aleey/mitgcm/rPIG_'; %output data NOT in github repo (contact for copy)
+rootdir = '/data/oceans_output/shelf/aleey/mitgcm/rPIG/rPIG_'; %output data NOT in github repo (contact for copy)
 nx = 360;
 ny = 320;
 dx = 400;
@@ -176,7 +178,9 @@ scatter(ax, c_image_GL(1,:), c_image_GL(2,:), 4,'k', 'filled')
 %contour(xi, yi, bathy', [0,0], 'k', 'linewidth', 2)
 
 %add the fronts
-colmap = viridis(7);
+colmap = lines(6);
+colmap(1,:) = [1,0,0]; %make first red
+colmap(end,:) = [0,1,0]; %last row green
 for i = 6:-1:1 %reverse order so 2009 on top
     cfront = cell2mat(topo_front_data(i));
     c_image_front = model2image(cfront);
@@ -299,7 +303,7 @@ scatter(ax, c_image_GL(1,:), c_image_GL(2,:), 4,'k', 'filled')
 %contour(xi, yi, bathy', [0,0], 'k', 'linewidth', 2)
 
 %add the fronts
-for i = 1:6
+for i = 6:-1:1
     cfront = cell2mat(topo_front_data(i));
     c_image_front = model2image(cfront);
     scatter(c_image_front(1,:), c_image_front(2,:), 5, colmap(i,:), 'filled');
