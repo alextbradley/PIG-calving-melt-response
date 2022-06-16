@@ -1,7 +1,6 @@
 %Make figure 14 of the PIG melt response paper: Evolution of cross sectional temperature for both north and south boxes.
 
 
-
 % NB: Many of the data files referred to in this script are too large to be hosted online. These files are hosted internally as BAS.
 % Please email Alex Bradley (aleey@bas.ac.uk) to obtain a copy.
 %Alex Bradley (aleey@bas.ac.uk) 27/05/2021. MIT license.

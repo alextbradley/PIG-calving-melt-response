@@ -27,7 +27,7 @@ fig = gcf; fig.Position(3:4) = [1085, 540];
 %
 % Data locations
 %
-rootdir = '/data/oceans_output/shelf/aleey/mitgcm/rPIG_'; %output data NOT in github repo (contact for copy)
+rootdir = '/data/oceans_output/shelf/aleey/mitgcm/rPIG/rPIG_'; %output data NOT in github repo (contact for copy)
 topodir = '../gendata_realistic/topo_files/';
 bathypath = '../gendata_realistic/bathy_files/bathymetry.shice';
 

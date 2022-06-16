@@ -1,4 +1,10 @@
-%Make figure 1 in the PIG calving manuscript: plots of (a) PIG bathymetry with 2009 and 2020 ice front on (b) ice topo and bathymetry along the contour, (c) gap along the contour
+% Make figure 1. Four panels:
+% (a) PIG bathymetry with 2009, 2020 ice fronts and approx ridge crest 
+% (b) PIG water column thickness with 2009, 2020 ice fronts and approx ridge crest
+% (c) ice topo and bathymetry along the ridge crest
+% (d) gap along the contour
+%
+% Note that this figure appears as (matlab) figure 2. Code also produces contour plots of bathymetry and fronts, whose data are used in the main figure.
 
 %Alex Bradley (aleey@bas.ac.uk) 27/05/2021. MIT license.
 
@@ -7,11 +13,11 @@
 %
 saveflag = 0;
 addpath('plot_tools');
-plot_defaults
-positions = [0.08,0.37,0.40,0.53; %bathymetry depth
-	     0.58,0.37,0.40,0.53; %ridge-draft gap	
+plot_defaults           %set plot defaults
+positions = [0.08,0.37,0.40,0.53; 
+	     0.58,0.37,0.40,0.53;	
              0.08, 0.1, 0.40, 0.25;
-             0.58, 0.1, 0.40, 0.25];
+             0.58, 0.1, 0.40, 0.25]; %subplot positions
 
 close all
 
@@ -110,8 +116,6 @@ yline = y(yidx);
 plot(xline, yline, 'k--', 'linewidth', 2);
 
 
-%error()
-
 %
 %get bathy and topo along line
 %
@@ -187,7 +191,7 @@ camroll(-90);
 %txa = text(ax(1), 250, 16000, '(a)', 'FontSize', 12, 'interpreter', 'latex');
 
 %
-% Plot 2: Ridge-draft gap
+% Plot 2: Water column thickness
 %
 ax(2) = subplot('Position',positions(2,:)); imshow(imageData);
 
@@ -231,9 +235,9 @@ camroll(-90);
 % Plot along the cross section
 %
 ax(3) = subplot('Position', positions(3,:)); grid on 
-plot(sline/1e3, bathyline, 'color', plotcolor1, 'linewidth', 2);
+plot(sline/1e3, bathyline, 'color', 'k', 'linewidth', 2);
 hold on
-plot(sline/1e3, topoline, 'color', plotcolor3, 'linewidth', 2);
+plot(sline/1e3, topoline,'--', 'color', 'k', 'linewidth', 2);
 xlim([0, 45])
 ptAA = text(ax(3), 1,-750, 'A', 'FontSize', 12, 'FontWeight', 'bold');
 ptBB = text(ax(3), max(ax(3).XLim)-3 ,-750, 'B', 'FontSize', 12, 'FontWeight', 'bold');
@@ -241,7 +245,7 @@ ptBB = text(ax(3), max(ax(3).XLim)-3 ,-750, 'B', 'FontSize', 12, 'FontWeight', '
 %ax(3).XTickLabels = cell(length(ax(3).XTick), 1);
 
 ax(4) = subplot('Position', positions(4,:)); grid on
-plot(sline/1e3,topoline - bathyline, 'color', plotcolor1, 'linewidth', 2);
+plot(sline/1e3,topoline - bathyline, 'color', 'k', 'linewidth', 2);
 xlim([0, 45])
 ptAA = text(ax(4), 1,300, 'A', 'FontSize', 12, 'FontWeight', 'bold');
 ptBB = text(ax(4), max(ax(4).XLim)-3 ,300, 'B', 'FontSize', 12, 'FontWeight', 'bold');
