@@ -107,6 +107,7 @@ melt = mean(melt, 3); %average over months ntout1 to ntout2
 melt = -melt * secs_per_year / density_ice;
 melt_scenarios{i} = melt;
 
+
 %Theta
 Theta_fname = strcat(rootdir, run_nos(i), '/run/stateTheta.nc');
 Theta = ncread(Theta_fname, 'THETA', [1,1,1,ntout1], [Inf, Inf, Inf, 1+ntout2 - ntout1]);

@@ -309,7 +309,7 @@ txt150 = text(0.1, 1.3,"$W = 150$~m", 'interpreter', 'latex', 'FontSize', 12) ;
 ax = gca; ax.XTickLabels = cell(0,1);
 ylim([0.2, 1.4])
 text(-10,1.4, "(b)", 'Interpreter', 'latex', 'FontSize', 12)
-legend({"$\mathcal{M}$", "$U_e$","$U_{be}$", "$\Delta T_e$"}, 'location', 'southwest','interpreter', 'latex', 'FontSize', 12)
+legend({"$\mathcal{M}$", "$U_e$","$\bar{U}_{e}$", "$\Delta T_e$"}, 'location', 'southwest','interpreter', 'latex', 'FontSize', 12)
 
 end
 end
