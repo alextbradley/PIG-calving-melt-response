@@ -263,7 +263,7 @@ ylim([0.3, 1.8])
 xlabel('$l_c$ (km)', 'Interpreter', 'Latex', 'FontSize', ax_fontsize);
 ylabel('Relative change', 'Interpreter', 'latex', 'FontSize', ax_fontsize)
 xlim([0, 84 - 40]);
-legend({"$\mathcal{M}$", "$U_e$", "$U_{be}$", "$\Delta T_e$"}, 'location', 'southwest','interpreter', 'latex', 'FontSize', ax_fontsize)
+legend({"$\mathcal{M}$", "$U_e$", "$\bar{U}_{e}$", "$\Delta T_e$"}, 'location', 'southwest','interpreter', 'latex', 'FontSize', ax_fontsize)
 
 txb = text(-7,1.95, '(b)', 'FontSize', ax_fontsize, 'Interpreter', 'latex');
 
