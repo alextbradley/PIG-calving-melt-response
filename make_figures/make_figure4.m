@@ -116,33 +116,21 @@ VVEL = ncread(VVEL_fname, 'VVEL', [1,1,1,ntout1], [Inf, Inf, Inf,  1+ntout2 - nt
 VVEL = mean(VVEL, 4);
 
 %boundary layer quantities
-Nb = 1; %number of grid pts to take mean over
+Nb = 2; %number of grid pts to take mean over (hard coded)
 Sbl = nan(nx,ny); Tbl = nan(nx,ny); Ubl = nan(nx, ny); Vbl = nan(nx,ny);
 for p = 1:nx
 for q = 1:ny
-        if topo(p, q) < 0 %if we're in the cavity
-                idxtop = find((topo(p,q) - (-Z)) > 0, 1, 'first'); %gives you the index of first Z grid point above the bathymetry
-                idxtop = find(Theta(p,q,:) ~= 0);
-                idxtop = idxtop(1);
-                Sbl(p,q) = double(mean(Salt(p,q,idxtop:idxtop+Nb-1)));
-                Tbl(p,q) = double(mean(Theta(p,q,idxtop:idxtop+Nb-1)));
-                Ubl(p,q) = double(mean(UVEL(p,q,idxtop:idxtop+Nb-1)));
-                Vbl(p,q) = double(mean(VVEL(p,q,idxtop:idxtop+Nb-1)));
-	
-		if 0 %account for partial cell in the mean calculation (not relevant if using Nb = 1 i.e. single grid cell)
-		draft = topo(p,q);
-		partial_cell_frac = abs(rem(draft, dz)) / dz;
-		draft_rounded = draft + abs(rem(draft, dz)); 
-		[~,idxtop] = min(abs(-Z - draft_rounded));
-		vec = [partial_cell_frac,1,1]';
-		Sbl(p,q) = sum(vec.*squeeze(Salt(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
-		Tbl(p,q) = sum(vec.*squeeze(Theta(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
-		
-		Ubl(p,q) = sum(vec.*squeeze(UVEL(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
-		Vbl(p,q) = sum(vec.*squeeze(VVEL(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
-		end
-		
-        end
+   if topo(p, q) < 0 %if we're in the cavity
+        draft = topo(p,q);
+        partial_cell_frac = abs(rem(draft, dz)) / dz;
+        draft_rounded = draft + abs(rem(draft, dz));
+        [~,idxtop] = min(abs(-Z - draft_rounded));
+        vec = [partial_cell_frac,1-partial_cell_frac]'; %issue weights so that it's computed as the average over dz
+        Sbl(p,q) = sum(vec.*squeeze(Salt(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
+        Tbl(p,q) = sum(vec.*squeeze(Theta(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
+        Ubl(p,q) = sum(vec.*squeeze(UVEL(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
+        Vbl(p,q) = sum(vec.*squeeze(VVEL(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
+    end
 end %end loop over y grid
 end %end loop over x grid
 

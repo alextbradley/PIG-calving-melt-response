@@ -128,7 +128,7 @@ VVEL_fname = strcat(rootdir, run_nos(i,j), '/run/stateVvel.nc');
 VVEL = ncread(VVEL_fname, 'VVEL', [1,1,1,ntout1], [Inf, Inf, Inf,  1+ntout2 - ntout1]);
 VVEL = mean(VVEL, 4);
 %boundary layer quantities
-Nb = 1; %number of grid pts to take mean over
+Nb = 2; %number of grid pts to take mean over
 Sbl = nan(nx,ny); Tbl = nan(nx,ny); Ubl = nan(nx, ny); Vbl = nan(nx,ny);
 for p = 1:nx
 for q = 1:ny
@@ -137,7 +137,7 @@ for q = 1:ny
         partial_cell_frac = abs(rem(draft, dz)) / dz;
         draft_rounded = draft + abs(rem(draft, dz));
         [~,idxtop] = min(abs(-Z - draft_rounded));
-        vec = [partial_cell_frac,ones(1,Nb-1)]';
+        vec = [partial_cell_frac,1-partial_cell_frac]'; %issue weights so that it's computed as the average over dz
         Sbl(p,q) = sum(vec.*squeeze(Salt(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
         Tbl(p,q) = sum(vec.*squeeze(Theta(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
         Ubl(p,q) = sum(vec.*squeeze(UVEL(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
@@ -326,55 +326,3 @@ end
 
 %%
 
-%
-% plot evolution of f/h and  for each of the scenarios
-%
-figure(2); clf; 
-figure(3); clf; 
-A = parula(sz(2)+1);
-for i = 1:3 %i indexes W = 100, 150, 200
-for j = 1:sz(2) %j indexes snap scenarios
-topo = cell2mat(topo_scenarios(i,j));
-h = topo-bathy;
-h_lat = h(60,:);
-f_on_h = 2*7.292*1e-5 * sind(-75)./h_lat;
-figure(2); hold on;  subplot(3,1,i); title(['W = ' num2str(W(i))]);
-plot(128 - Y/1e3, f_on_h, 'color', A(j,:));
-
-dy = 400;
-grad_f_on_h = zeros(size(f_on_h));
-grad_f_on_h(2:end-1) = (f_on_h(3:end) - f_on_h(1:end-2))/2/dy;
-grad_f_on_h(1)   = (-3/2 * f_on_h(1) + 2*f_on_h(2) - 0.5*f_on_h(3))/dy;
-grad_f_on_h(end) =  (3/2 * f_on_h(end) - 2*f_on_h(end-1) + 0.5*f_on_h(end-2))/dy;
-figure(3); hold on; subplot(3,1,i); title(['W = ' num2str(W(i))]);
-plot(128 - Y/1e3, grad_f_on_h, 'color', A(j,:));
-
-legendinfo{j} = ['$\ell_c = ' num2str(84 - extent(j)) '$ km'];
-
-end %end loop over j (snap scenarios)
-
-for plt = 2:3
-    figure(plt); fig = gcf; fig.Position(3:4) = [560, 800];
-if i == 3
-xlabel('y');
-elseif i == 1
-legend(legendinfo, 'interpreter', 'latex', 'location', 'southwest');
-if plt == 2
-txt = text(128, -1.5e-6, 'grounding line', 'rotation', 90);
-else
-    txt = text(128,0, 'grounding line', 'rotation', 90);
-
-end
-
-end
-end
-
-end %end loop over i
-
-%%
-figure(3); for i = 1:3; subplot(3,1,i); ylim([-0.5, 2]*1e-10); end
-%%
-figure(3); suptitle('d/dy(f/h)')
-figure(3); suptitle('f/h')
-figure(3).Position(3:4) = [560,800];
-figure(2).Position(3:4) = [560,800];
