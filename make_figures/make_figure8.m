@@ -16,7 +16,7 @@
 %
 % Flags
 %
-gendata = 0; %specify whether to pass through the generate data loop
+gendata = 1; %specify whether to pass through the generate data loop
 saveflag = 0;
 
 %
@@ -128,7 +128,7 @@ VVEL_fname = strcat(rootdir, run_nos(i,j), '/run/stateVvel.nc');
 VVEL = ncread(VVEL_fname, 'VVEL', [1,1,1,ntout1], [Inf, Inf, Inf,  1+ntout2 - ntout1]);
 VVEL = mean(VVEL, 4);
 %boundary layer quantities
-Nb = 3; %number of grid pts to take mean over
+Nb = 1; %number of grid pts to take mean over
 Sbl = nan(nx,ny); Tbl = nan(nx,ny); Ubl = nan(nx, ny); Vbl = nan(nx,ny);
 for p = 1:nx
 for q = 1:ny
@@ -137,7 +137,7 @@ for q = 1:ny
         partial_cell_frac = abs(rem(draft, dz)) / dz;
         draft_rounded = draft + abs(rem(draft, dz));
         [~,idxtop] = min(abs(-Z - draft_rounded));
-        vec = [partial_cell_frac,1,1]';
+        vec = [partial_cell_frac,ones(1,Nb-1)]';
         Sbl(p,q) = sum(vec.*squeeze(Salt(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
         Tbl(p,q) = sum(vec.*squeeze(Theta(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
         Ubl(p,q) = sum(vec.*squeeze(UVEL(p,q,idxtop:idxtop+Nb-1)))/sum(vec);

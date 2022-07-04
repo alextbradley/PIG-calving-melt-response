@@ -116,7 +116,7 @@ VVEL = ncread(VVEL_fname, 'VVEL', [1,1,1,ntout1], [Inf, Inf, Inf,  1+ntout2 - nt
 VVEL = mean(VVEL, 4);
 
 %boundary layer quantities
-Nb = 3; %number of grid pts to take mean over
+Nb = 1; %number of grid pts to take mean over
 Sbl = nan(nx,ny); Tbl = nan(nx,ny); Ubl = nan(nx, ny); Vbl = nan(nx,ny);
 for p = 1:nx
 for q = 1:ny
@@ -129,7 +129,7 @@ for q = 1:ny
                 Ubl(p,q) = double(mean(UVEL(p,q,idxtop:idxtop+Nb-1)));
                 Vbl(p,q) = double(mean(VVEL(p,q,idxtop:idxtop+Nb-1)));
 	
-		if 1 %account for partial cell in the mean calculation
+		if 0 %account for partial cell in the mean calculation (not relevant if using Nb = 1 i.e. single grid cell)
 		draft = topo(p,q);
 		partial_cell_frac = abs(rem(draft, dz)) / dz;
 		draft_rounded = draft + abs(rem(draft, dz)); 

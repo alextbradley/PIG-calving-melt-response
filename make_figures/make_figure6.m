@@ -8,7 +8,7 @@
 %
 % Flags
 %
-gendata = 0; %specify whether to pass through the generate data loop
+gendata = 1; %specify whether to pass through the generate data loop
 save_flag = 0; 
 
 %
@@ -126,7 +126,7 @@ WVEL = ncread(WVEL_fname, 'WVEL', [1,1,1,ntout1], [Inf, Inf, Inf,  1+ntout2 - nt
 WVEL = mean(WVEL, 4);
 
 %boundary layer quantities
-Nb = 3; %number of grid pts to take mean over
+Nb = 1; %number of grid pts to take mean over
 Sbl = nan(nx,ny); Tbl = nan(nx,ny); Ubl = nan(nx, ny); Vbl = nan(nx,ny);
 for p = 1:nx
 for q = 1:ny
@@ -139,7 +139,7 @@ for q = 1:ny
                 Ubl(p,q) = double(mean(UVEL(p,q,idxtop:idxtop+Nb-1)));
                 Vbl(p,q) = double(mean(VVEL(p,q,idxtop:idxtop+Nb-1)));
 	
-		if 1 %account for partial cell in the mean calculation
+		if 0 %account for partial cell in the mean calculation (not relevant if using only top grid points, Nb = 1)
 		draft = topo(p,q);
 		partial_cell_frac = abs(rem(draft, dz)) / dz;
 		draft_rounded = draft + abs(rem(draft, dz)); 
@@ -299,8 +299,8 @@ xlim([0, 45])
 ylabel('Relative change', 'Interpreter', 'latex', 'FontSize', 12);
 if i == 3
 
-txt200= text(0.1, 1.175,"$W = 200$~m", 'interpreter', 'latex', 'FontSize', 12) ;
-ylim([0.8, 1.2])
+txt200= text(0.1, 0.725,"$W = 200$~m", 'interpreter', 'latex', 'FontSize', 12) ;
+ylim([0.7, 1.1])
 text(-10,1.2, "(c)", 'Interpreter', 'latex', 'FontSize', 12)
 xlabel('$l_c$ (km)', 'Interpreter', 'latex', 'FontSize', 12);
 

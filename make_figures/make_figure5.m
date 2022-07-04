@@ -58,6 +58,7 @@ ntout2 = 12; %define time period to average over
 zonal_idx = 50; %20km downstream
 %zonal_idx = 76; %30 km downstream of gl (entrance to "inner cavity")
 %zonal_idx = 126; %index of top of bump
+bump_idx = 126;
 merid_idx = floor(nx/2); %index of midpt in x
 
 %
@@ -125,6 +126,13 @@ UVEL = mean(UVEL, 4);
 VVEL_fname = strcat(rootdir, run_nos(i), '/run/stateVvel.nc');
 VVEL = ncread(VVEL_fname, 'VVEL', [1,1,1,ntout1], [Inf, Inf, Inf,  1+ntout2 - ntout1]);
 VVEL = mean(VVEL, 4);
+
+%compute heat flux across the ridge
+%vridge = squeeze(VVEL(:,bump_idx,:));
+%tridge = squeeze(Theta(:,bump_idx,:));
+%posvel = vridge > 0;
+%ridgeflux = sum(vridge(posvel).*tridge(posvel)) * dx * dz %ridge heat flux into cavity in K §m^3 s^(-1)  
+
 
 %compute BSF
 vvel = squeeze(sum(VVEL, 3)) * dz; %units m^2 /s
