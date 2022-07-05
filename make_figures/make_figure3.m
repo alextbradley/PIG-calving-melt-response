@@ -25,8 +25,8 @@ label_size = 11;
 ax_fontsize = 10;
 figure(1); clf;
 fig = gcf; fig.Position(3:4) = [900,900];
-NS_idx = 60; %index of line running North south
-EW_idx = 50; %index of line running east west
+NS_idx = 125; %index of line for zonal cross section
+EW_idx = 60; %index of line for meridional cross section
 
 % Data locations
 rootdir = '/data/oceans_output/shelf/aleey/mitgcm/APIGi/APIGi_'; %not in git repo
@@ -214,7 +214,7 @@ height2 = 0.25;
 start2 = 0.08;
 gap2  = 0.1;
 positions = [positions;
-	    start2, start2, width2, height2;
+	    start2, start2, width2*0.9, height2;
 	    start2 + width2 + gap2, start2, width2, height2]; 
 
 %
@@ -234,8 +234,8 @@ XX = XX/1e3; YY = YY/1e3;
 velscale =15;
 quiver(XX(idxY, idxX),YY(idxY, idxX),velscale *Ubl(idxX, idxY)', velscale*Vbl(idxX, idxY)', 'autoscale', 'off', 'color', 'k')
 plot(X/1e3, 50*ones(length(X), 1), 'w--', 'linewidth', 1.5)
-plot(X/1e3, Y(EW_idx)*ones(length(X))/1e3, 'w', 'linewidth', 1.5)
-plot(X(NS_idx)*ones(1,230)/1e3, Y(1:230)/1e3, 'm--', 'linewidth', 1.5);
+%plot(X/1e3, Y(NS_idx)*ones(length(X))/1e3, 'w', 'linewidth', 1.5)
+plot(X(EW_idx)*ones(1,230)/1e3, Y(1:230)/1e3, 'm--', 'linewidth', 1.5);
 
 %colorbar and arrow
 cbar(1) = colorbar;
@@ -412,48 +412,55 @@ ax(6) = subplot('Position', positions(5,:)); hold on; box on;
 ax(6).FontSize = 10;
 SZS = squeeze(Salt(:, NS_idx,:));
 TZS = squeeze(Theta(:, NS_idx, :));
+UZS = squeeze(UVEL(:,NS_idx,:));
+VZS = squeeze(VVEL(:,NS_idx,:));
 for p = 1:nx
 for q = 1:nz
         if bathy(p,NS_idx) > -Z(q)
         TZS(p,q) = nan;
         SZS(p,q) = nan;
+        UZS(p,q) = nan;
+        VZS(p,q) = nan;
         end
         if topo(p,NS_idx)< -Z(q)
         TZS(p,q) = nan;
         SZS(p,q) = nan;
+        UZS(p,q) = nan;
+        VZS(p,q) = nan;
         end
 end
 end
 TZS  = saturate(TZS, max(max(TMS)), min(min(TMS)));
-contourf(X/1e3,-Z, TZS',30, 'linestyle', 'none');
+UZS = saturate(UZS,0.22, -0.05);
+contourf(X/1e3,-Z, UZS',60, 'linestyle', 'none');
 colormap(ax(6), cmap);
 hold on
 ylabel('depth (m)', 'Interpreter', 'latex', 'FontSize', 12);
 xlabel('$x$~(km)', 'Interpreter', 'latex', 'FontSize' ,12);
-% colourbar not needed for (e)
-%cbar(6) = colorbar;
+
+cbar(6) = colorbar;
+%colormap(ax(6), redblue)
 %cbar(6).Location = 'northoutside';
 %cbar(6).Position(1) = positions(5,1) + 0.02;
 %cbar(6).Position(2) = 0.89;
-%cbar(6).Label.String = '$\Theta$~(${}^\circ$C)';
-%cbar(6).Label.Interpreter = 'latex';
-%cbar(6).Label.FontSize = 11;
+cbar(6).Label.String = '$u~(\mathrm{m}~\mathrm{s}^{-1}$ )';
+cbar(6).Label.Interpreter = 'latex';
+cbar(6).Label.FontSize = 11;
 %cbar(6).Position(3) = widthsect - 0.04;
 %cbar(6).Position(4) = 0.02;
 
-ax(6).YTick = -1050:100:-750;
-ylim([bathy(3,NS_idx),topo(3,NS_idx)])
-axnew = axes;
-axnew.Position = ax(6).Position;
-[C,h] =contour(X/1e3,-Z , SZS', 34.2:0.2:34.6, 'k');
-clabel(C,h);
+ax(6).YLim = [-700,-600];
+ax(6).YTick = -700:50:-600;
+%ylim([bathy(3,NS_idx),topo(3,NS_idx)])
+%axnew = axes;
+%axnew.Position = ax(6).Position;
+%[C,h] =contour(X/1e3,-Z , SZS', 34.2:0.2:34.6, 'k');
+%clabel(C,h);
 
-xticks([]);
-yticks([]);
-set(axnew, 'color', 'none')
-ylim([bathy(3,NS_idx),topo(3,NS_idx)])
+%set(axnew, 'color', 'none')
+%ylim([bathy(3,NS_idx),topo(3,NS_idx)])
 
-txt(6) = text(-4,-680, '(e)', 'Interpreter', 'latex', 'FontSize',  12);
+txt(6) = text(-12,-596, '(e)', 'Interpreter', 'latex', 'FontSize',  12);
 
 %
 % Save
