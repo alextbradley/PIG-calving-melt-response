@@ -381,7 +381,7 @@ ylabel('depth (m)', 'Interpreter', 'latex', 'FontSize', 12);
 xlabel('$y$~(km)', 'Interpreter', 'latex', 'FontSize' ,12);
 cbar(5) = colorbar;
 cbar(5).Location = 'north';
-cbar(5).Position = [0.65, 0.27, 0.3,0.01];
+cbar(5).Position = [0.65, 0.26, 0.3,0.01];
 cbar(5).Label.String = '$\Theta$~(${}^\circ$C)';
 cbar(5).Label.Interpreter = 'latex';
 cbar(5).Label.FontSize = 11;
