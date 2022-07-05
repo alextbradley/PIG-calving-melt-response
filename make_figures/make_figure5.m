@@ -11,7 +11,7 @@
 %
 % Flags
 %
-gendata = 0; %specify whether to pass through the generate data loop
+gendata = 1; %specify whether to pass through the generate data loop
 save_flag = 0;
 
 %
@@ -259,7 +259,6 @@ stream = cell2mat(bsf_scenarios(p));
 streamsm = smooth2a(stream, 2,2);
 axnew = axes;
 axnew.Position = ax(1,p).Position;
-min(min(streamsm(idx)))
 [C,h] =contour(-Y/1e3,X/1e3, streamsm, [-0.7, -0.5, -0.3, -0.1], 'k');
 %clabel(C,h);
 hold on
