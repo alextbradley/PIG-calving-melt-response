@@ -3,7 +3,7 @@
 %(b) Plot the bottom temperature with the bottom current overlain
 %(c) Plot of the water column thickness with barotropic stream function overlain
 %(d) Plot of the barotropic potential vorticity with barotropic stream function overlain
-%(e) Zonal cross section of temperature near the GL with 34.2, 34.4, 34.6 salinity contours 
+%(e) Zonal cross section of meridional velocity at the ridge crest 
 %(f) Meridional cross section of temperature along centre of the domain with 34.2, 34.4, 34.6 salinity contours.
 %
 % NB: Many of the data files referred to in this script are too large to be hosted online. These files are hosted internally as BAS.
@@ -24,7 +24,7 @@ plot_defaults
 label_size = 11;
 ax_fontsize = 10;
 figure(1); clf;
-fig = gcf; fig.Position(3:4) = [900,900];
+fig = gcf; fig.Position(3:4) = [900,800];
 NS_idx = 125; %index of line for zonal cross section
 EW_idx = 60; %index of line for meridional cross section
 
@@ -245,6 +245,8 @@ cbar(1).Label.Interpreter = 'latex';
 cbar(1).Position(end) = 0.01;
 cbar(1).Position(2) = 0.92;
 cbar(1).Label.FontSize = 11;
+ax(1).XTick = [0,24,48];
+ax(1).XLim = [0,48.1];
 %plot([20, 30], [120,120], 'k', 'linewidth', 1);
 %text(31, 120, '0.6 m/s')
 xlabel('$x$~(km)', 'Interpreter', 'latex', 'FontSize' ,12);
@@ -266,10 +268,12 @@ cbar(2) = colorbar;
 cbar(2).Location = 'northoutside';
 cbar(2).Position(end) = 0.01;
 cbar(2).Position(2) = 0.92;
-cbar(2).Label.String = 'Bottom temp~(${}^\circ$C)';
+cbar(2).Label.String = 'bottom temp~(${}^\circ$C)';
 cbar(2).Label.Interpreter = 'latex';
 cbar(2).Label.FontSize = 11;
 yticks([])
+ax(2).XTick = [0,24,48];
+ax(2).XLim = [0,48.1];
 quiver(XX(idxY, idxX),YY(idxY, idxX),velscale *Ubot(idxX, idxY)', velscale*Vbot(idxX, idxY)', 'autoscale', 'off', 'color', 'k')
 xlabel('$x$~(km)', 'Interpreter', 'latex', 'FontSize' ,12);
 
@@ -284,6 +288,8 @@ column_thickness = topo - bathy;
 plot(X/1e3, 50*ones(length(X), 1), 'w--', 'linewidth', 1.5)
 contourf(X/1e3,Y/1e3,1e3* (1./column_thickness)', 20, 'linestyle', 'none');
 colormap(ax(3), cmap);
+ax(3).XTick = [0,24,48];
+ax(3).XLim = [0,48.1];
 cbar(3) = colorbar;
 cbar(3).Location = 'northoutside';
 cbar(3).Position(end) = 0.01;
@@ -319,17 +325,19 @@ set(axnew, 'color', 'none')
 %
 ax(4) = subplot('Position', positions(4,:)); hold on; box on
 ax(4).FontSize = 10;
-contourf(X/1e3, Y/1e3,1e7* BPV', 20, 'linestyle', 'none'); 
+bpvsat = 1e6*BPV;  bpvsat = saturate(bpvsat,.5,-2);
+contourf(X/1e3, Y/1e3,bpvsat', 20, 'linestyle', 'none'); 
 colormap(ax(4), cmap);
 cbar(4) = colorbar;
 cbar(4).Location = 'northoutside';
 cbar(4).Position(end) = 0.01;
 cbar(4).Position(2) = 0.92;
-cbar(4).Label.String = '$10^{7}\times[(f + \zeta )/ h]$';
+cbar(4).Label.String = '$10^{6}\times[(f + \zeta )/ h]$';
 cbar(4).Label.Interpreter = 'latex';
 cbar(4).Label.FontSize = 11;
 yticks([])
-ax(4).XTick = [0,20,40];
+ax(4).XTick = [0,24,48];
+ax(4).XLim = [0,48.1];
 xlabel('$x$~(km)', 'Interpreter', 'latex', 'FontSize' ,12);
 txt(4) = text(-8,130, '(d)', 'Interpreter', 'latex', 'FontSize',  12);
 
@@ -448,8 +456,9 @@ cbar(6).Label.Interpreter = 'latex';
 cbar(6).Label.FontSize = 11;
 %cbar(6).Position(3) = widthsect - 0.04;
 %cbar(6).Position(4) = 0.02;
-
-ax(6).YLim = [-700,-600];
+ax(6).XTick = [0,12,24,36,48];
+ax(6).XLim = [0,48.01];
+ax(6).YLim = [-701,-600];
 ax(6).YTick = -700:50:-600;
 %ylim([bathy(3,NS_idx),topo(3,NS_idx)])
 %axnew = axes;
