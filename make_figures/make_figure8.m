@@ -312,3 +312,8 @@ ylim([-1100,-300])
 
 end %end loop over runs
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if save_flag
+saveas(gcf, '../../PIG-calving-melt-response-tex/figures/figureH_melt_response_sections_P600_W200.png')
+end
+

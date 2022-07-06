@@ -233,6 +233,5 @@ fig = gcf; fig.Position(3:4) = [1280, 687.333];
 %
 set(gcf, 'color', 'w');
 if save_flag
-%saveas(gcf, "plots/figure12.eps", "epsc")
-saveas(gcf, "plots/figure12.png")
+saveas(gcf, "../../PIG-calving-melt-response-tex/figures/figureM_realistic_melt_anomalies.png")
 end

@@ -320,8 +320,7 @@ te = text(ax(3), -8, 1.24, '(e)', 'Interpreter', 'latex', 'FontSize', 12);
 %
 set(gcf, 'color', 'w')
 if saveflag
-%saveas(gcf, 'plots/figure8.eps', 'epsc');
-saveas(gcf, "plots/figure8.png");
+saveas(gcf, '../../PIG-calving-melt-response-tex/figures/fig:figureI_decompositions_variableP.png')
 end
 
 %%

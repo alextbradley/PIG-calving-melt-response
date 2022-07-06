@@ -329,8 +329,6 @@ camroll(-90);
 set(fig1, 'color', 'w')
 set(fig2, 'color', 'w')
 if saveflag
-%saveas(fig1, "plots/figure10a.eps", "epsc");
-%saveas(fig2, "plots/figure10b.eps", "epsc");
-saveas(fig1, "plots/figure10a.png");
-saveas(fig2, "plots/figure10b.png");
+saveas(fig1, "../../PIG-calving-melt-response-tex/figures/figureK_realistic_setup_a.png");
+saveas(fig2, "../../PIG-calving-melt-response-tex/figures/figureK_realistic_setup_b.png");
 end
