@@ -1,18 +1,15 @@
-%Make figure 7 in the PIG calving melt rate manuscript: results from the W = 200, P600 runs.
-%Column 1: Melt rate and BSF contours 
-%Column 2: Zonal Sections velocity
-%Column 3: Zonal Sections temperature
-%Column 4: Zonal Section of meridional velocity
+%Make figure 7 in the PIG calving manuscript: plots of (a) mean melt rate with calving and (b) decomposition of changes in melting for W = 100, 150, 200
 %
 % NB: Many of the data files referred to in this script are too large to be hosted online. These files are hosted internally as BAS.
-% Please email Alex Bradley (aleey@bas.ac.uk) to obtain a copy.
+% Please email Alex Bradley (aleey@bas.ac.uk) to obtain a copy. 
+
 %Alex Bradley (aleey@bas.ac.uk) 27/05/2021. MIT license.
 
 %
 % Flags
 %
 gendata = 1; %specify whether to pass through the generate data loop
-save_flag = 0;
+save_flag = 0; 
 
 %
 % Preliminaries
@@ -21,11 +18,12 @@ addpath("plot_tools");
 plot_defaults
 label_size = 11;
 ax_fontsize = 10;
-figure(1); clf;
-fig = gcf; fig.Position(3:4) = [1000, 800];
+figure(1); clf; 
+fig = gcf; fig.Position(3:4) = [1000, 390];
 
-m% Data locations
-rootdir = '/data/oceans_output/shelf/aleey/mitgcm/APIGi/APIGi_'; %nb: not in git repo
+%
+% Data locations
+rootdir = '/data/oceans_output/shelf/aleey/mitgcm/APIGi/APIGi_'; %not in git repo
 topodir = '../gendata/topo_files/';
 bathy_path = '../gendata/bathy_files/bathymetry_H400.shice';
 
@@ -50,39 +48,25 @@ lambda = 7.61*1e-4;%constants in liquidus
 gamma = 5.73*1e-2;
 T0 = 8.32*1e-2;
 
+
+
 %time details
-ntout1 = 11;
-ntout2 = 12; %define time period to average over
+ntout1 = 6; 
+ntout2 = 8; %define time period to average over
 
-%cross section info
-zonal_idx = 50; %20km downstream
-%zonal_idx = 76; %30 km downstream of gl (entrance to "inner cavity")
-%zonal_idx = 126; %index of top of bump
-merid_idx = floor(nx/2); %index of midpt in x
-
-%
+% 
 % Generate data loop
 %
-run_nos = ["125", "126", "127", "128", "129", "130", "131", "132", "133", "134"];
-sz = length(run_nos);
+run_nos =["077", "078", "079", "080", "081", "082", "083", "084", "085", "086"; %H = 100
+	"102", "102", "103", "104", "105", "106", "107", "108", "109", "110"; %H = 150
+	"125", "126", "127", "128", "129", "130", "131", "132", "133", "134"]; %H = 200
+sz = size(run_nos);
 extent = [84,80,75,70,65,60,55,50,45,40];
 H = 400; %ridge height (always 400);
-W = 100; %ridge gap
+W = [100,150, 200]; %ridge gap
 
 %generate data loop
 if gendata
-
-%setup storage
-melt_scenarios = cell(1,sz);
-topo_scenarios = cell(1,sz);
-zonal_theta_scenarios = cell(1,sz);
-zonal_salt_scenarios = cell(1,sz);
-zonal_vvel_scenarios = cell(1,sz);
-zonal_uvel_scenarios = cell(1,sz);
-merid_uvel_scenarios = cell(1,sz);
-merid_salt_scenarios = cell(1,sz);
-merid_theta_scenarios = cell(1,sz);
-bsf_scenarios = cell(1,sz);
 
 %load unchanging bathy
 fid = fopen(bathy_path);
@@ -90,42 +74,84 @@ bathy = fread(fid, 'real*8', 'b');
 bathy = reshape(bathy, [nx, ny]);
 bathy(bathy == 0) = nan;
 
+%setup storage
+melt_scenarios = cell(sz);
+Ubl_scenarios  = cell(sz);
+Vbl_scenarios  = cell(sz);
+Tbl_scenarios  = cell(sz);
+Sbl_scenarios  = cell(sz);
+topo_scenarios = cell(sz); 
+bsf_scenarios  = cell(sz);
+bcsf_scenarios = cell(sz); %baroclinic sf
+uvel_baro_scenarios = cell(sz); 
+vvel_baro_scenarios = cell(sz);
+
 %loop over runs
-for i = 1:sz
+for i = 1:sz(1)
+for j = 1:sz(2)
 %draft
-topo_fname=  ['shelfice_topo_H' num2str(H) '_W' num2str(W) '_extent' num2str(extent(i)) 'km.bin'];
+topo_fname=  ['shelfice_topo_H' num2str(H) '_W' num2str(W(i)) '_extent' num2str(extent(j)) 'km.bin'];
 topo_fid = fopen(strcat(topodir, '/',topo_fname));
 topo = fread(topo_fid, 'real*8', 'b');
-topo = reshape(topo, [nx,ny]);
-topo_scenarios{i} = topo;
-
+topo = reshape(topo, [nx, ny]);
+topo_scenarios{i,j} = topo;
 
 %melt rates
-state2D_fname = strcat(rootdir, run_nos(i), '/run/state2D.nc');
+state2D_fname = strcat(rootdir, run_nos(i,j), '/run/state2D.nc');
 melt = ncread(state2D_fname, 'SHIfwFlx', [1, 1, ntout1], [Inf, Inf, 1+ntout2- ntout1]);
 melt = mean(melt, 3); %average over months ntout1 to ntout2
 melt = -melt * secs_per_year / density_ice;
-melt_scenarios{i} = melt;
+melt_scenarios{i,j} = melt;
 
 %Theta
-Theta_fname = strcat(rootdir, run_nos(i), '/run/stateTheta.nc');
+Theta_fname = strcat(rootdir, run_nos(i,j), '/run/stateTheta.nc');
 Theta = ncread(Theta_fname, 'THETA', [1,1,1,ntout1], [Inf, Inf, Inf, 1+ntout2 - ntout1]);
 Theta = mean(Theta, 4);
 
 %Salinity
-Salt_fname = strcat(rootdir, run_nos(i), '/run/stateSalt.nc');
+Salt_fname = strcat(rootdir, run_nos(i,j), '/run/stateSalt.nc');
 Salt = ncread(Salt_fname, 'SALT', [1,1,1,ntout1], [Inf, Inf, Inf, 1+ntout2 - ntout1]);
 Salt = mean(Salt, 4);
 
 %Velocities
-UVEL_fname = strcat(rootdir, run_nos(i), '/run/stateUvel.nc');
+UVEL_fname = strcat(rootdir, run_nos(i,j), '/run/stateUvel.nc');
 UVEL = ncread(UVEL_fname, 'UVEL', [1,1,1,ntout1], [Inf, Inf, Inf,  1+ntout2 - ntout1]);
 UVEL = mean(UVEL, 4);
-VVEL_fname = strcat(rootdir, run_nos(i), '/run/stateVvel.nc');
+VVEL_fname = strcat(rootdir, run_nos(i,j), '/run/stateVvel.nc');
 VVEL = ncread(VVEL_fname, 'VVEL', [1,1,1,ntout1], [Inf, Inf, Inf,  1+ntout2 - ntout1]);
 VVEL = mean(VVEL, 4);
 
-%compute BSF
+WVEL_fname = strcat(rootdir, run_nos(i,j), '/run/stateWvel.nc');
+WVEL = ncread(WVEL_fname, 'WVEL', [1,1,1,ntout1], [Inf, Inf, Inf,  1+ntout2 - ntout1]);
+WVEL = mean(WVEL, 4);
+
+%boundary layer quantities
+Nb = 2; %number of grid pts to take mean over (hard coded)
+Sbl = nan(nx,ny); Tbl = nan(nx,ny); Ubl = nan(nx, ny); Vbl = nan(nx,ny);
+for p = 1:nx
+for q = 1:ny
+   if topo(p, q) < 0 %if we're in the cavity
+        draft = topo(p,q);
+        partial_cell_frac = abs(rem(draft, dz)) / dz;
+        draft_rounded = draft + abs(rem(draft, dz));
+        [~,idxtop] = min(abs(-Z - draft_rounded));
+        vec = [partial_cell_frac,1-partial_cell_frac]'; %issue weights so that it's computed as the average over dz
+        Sbl(p,q) = sum(vec.*squeeze(Salt(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
+        Tbl(p,q) = sum(vec.*squeeze(Theta(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
+        Ubl(p,q) = sum(vec.*squeeze(UVEL(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
+        Vbl(p,q) = sum(vec.*squeeze(VVEL(p,q,idxtop:idxtop+Nb-1)))/sum(vec);
+    end
+end %end loop over y grid
+end %end loop over x grid
+
+Sbl_scenarios{i,j} = Sbl;
+Tbl_scenarios{i,j} = Tbl;
+Ubl_scenarios{i,j} = Ubl;
+Vbl_scenarios{i,j} = Vbl;
+
+%
+% barotropic and baroclinic sf
+%
 vvel = squeeze(sum(VVEL, 3)) * dz; %units m^2 /s
 stream=zeros(size(vvel));
 stream(nx,:)=vvel(nx,:)*dx;
@@ -133,182 +159,197 @@ for p=nx-1:-1:1
  stream(p,:)=stream(p+1,:) + vvel(p,:)*dx;
 end
 stream = stream/1e6; %convert to sv
-bsf_scenarios{i} = stream;
+bsf_scenarios{i,j} = stream;
 
-%zonal xsection quantities
-TZS = squeeze(Theta(:,zonal_idx, :));
-SZS = squeeze(Salt(:, zonal_idx, :));
-VZS = squeeze(VVEL(:, zonal_idx, :));
-UZS = squeeze(UVEL(:, zonal_idx, :));
+wvel = squeeze(sum(WVEL, 3)) * dz; %units m^2 /s
+stream=zeros(size(wvel));
+stream(nx,:)=wvel(nx,:)*dx;
+for p=nx-1:-1:1
+ stream(p,:)=stream(p+1,:) + wvel(p,:)*dx;
+end
+stream = stream/1e6; %convert to sv
+bcsf_scenarios{i,j} = stream;
 
-%remove bump and topo
+
+%compute barotropic velocities
+vvel_barotropic = zeros(nx,ny);
+uvel_barotropic = zeros(nx,ny);
 for p = 1:nx
-for q = 1:nz
-        if bathy(p,zonal_idx) > -Z(q)
-        TZS(p,q) = nan;
-        SZS(p,q) = nan;
-        VZS(p,q) = nan;
-        UZS(p,q) = nan;
-        end
-        if topo(p, zonal_idx)< -Z(q)
-        TZS(p,q) = nan;
-        SZS(p,q) = nan;
-        VZS(p,q) = nan;
-        UZS(p,q) = nan;
-        end
-end
-end
-zonal_theta_scenarios{i} = TZS;
-zonal_salt_scenarios{i} = SZS;
-zonal_vvel_scenarios{i} = VZS;
-zonal_uvel_scenarios{i} = UZS;
+for q = 1:ny
+vvel = squeeze(VVEL(p,q,:));
+vvel_barotropic(p,q) = mean(vvel(vvel ~= 0));
+uvel = squeeze(UVEL(p,q,:));
+uvel_barotropic(p,q) = mean(uvel(uvel ~= 0));
 
-%merid section quantities
-UMS = squeeze(UVEL(merid_idx, :,:));
-VMS = squeeze(VVEL(merid_idx, :,:));
-SMS = squeeze(Salt(merid_idx, :,:));
-TMS = squeeze(Theta(merid_idx, :, :));
-for p = 1:ny
-for q = 1:nz
-        if bathy(merid_idx,p) > -Z(q)
-        TMS(p,q) = nan;
-        SMS(p,q) = nan;
-	UMS(p,q) = nan;
-	VMS(p,q) = nan;
-        end
-        if topo(merid_idx,p)< -Z(q)
-        TMS(p,q) = nan;
-        SMS(p,q) = nan;
-	UMS(p,q) = nan;
-	VMS(p,q) = nan;
-        end
 end
 end
-merid_uvel_scenarios{i} = UMS;
-merid_salt_scenarios{i} = SMS;
-merid_theta_scenarios{i} = TMS;
-merid_vvel_scenarios{i} = VMS;
+vvel_baro_scenarios{i,j} = vvel_barotropic;
+uvel_baro_scenarios{i,j} = uvel_barotropic;
+end %end loop over i
+end %end loop over j
+end %end generate data loop
+
+%
+% Plots
+%
+
+positions = [0.1,0.122,0.4,0.85;
+	     0.6, 0.55, 0.38, 0.4;
+	     0.6, 0.1, 0.38, 0.4];
+
+%
+% Plot 1: Mean inner cavity melt rate with calving
+%
+subplot('Position', positions(1,:));
+grid on; hold on; ax = gca; box on
+
+for i = 1:3
+ave_melt = zeros(1,sz(2));
+for j = 1:sz(2)
+melt = cell2mat(melt_scenarios(i,j));
+ave_melt(j) = mean(melt(idx));
+end
+
+plot([34,34],  [45,75], 'k--', 'linewidth', 1.5, 'HandleVisibility', 'off'); %plot the location of top of ridge
+if i == 1 %H =  100
+plot(84 - extent, ave_melt, 'o-', 'color', 0.6*ones(3,1), 'markerfacecolor', 0.6*ones(3,1));
+elseif i == 2
+plot(84 - extent, ave_melt, 'o-', 'color', plotcolor1, 'markerfacecolor', plotcolor1);
+elseif i == 3
+plot(84 - extent, ave_melt, 'o-', 'color', plotcolor2, 'markerfacecolor', plotcolor2);
+end %end plot style by H value
+end %end loop over i
+
+xlabel('$l_c$ (km)', 'Interpreter', 'latex', 'FontSize', 12);
+ylabel('Inner cavity melt rate (m/yr)', 'Interpreter', 'latex', 'FontSize', 12);
+xlim([0, 45]);
+ylim([45,75])
+legend({"$W$ = 100~m", "$W$ = 150~m", "$W$ = 200~m"}, 'location', 'southeast', 'FontSize', 12, 'Interpreter', 'latex');
+text(-10,75, "(a)", 'Interpreter', 'latex', 'FontSize', 12)
+
+%
+% Decompositions for H = 150, 200
+%
+
+for i = 2:3
+subplot('Position', positions(i,:))
+grid on; hold on; ax = gca; box on
+
+%set up storage
+relmelt        = zeros(1,sz(2));
+relmelt_noTemp = zeros(1,sz(2));
+relmelt_noVel  = zeros(1,sz(2));
+
+%get the baseline velocity, theta, salt
+Ubl_baseline = cell2mat(Ubl_scenarios(i,1));
+Vbl_baseline = cell2mat(Vbl_scenarios(i,1));
+Tbl_baseline = cell2mat(Tbl_scenarios(i,1));
+Sbl_baseline = cell2mat(Sbl_scenarios(i,1));
+Tl_baseline  = T0 + lambda*topo - gamma*Sbl_baseline;
+UdT_baseline = sqrt(Ubl_baseline.^2 + Vbl_baseline.^2) .* (Tbl_baseline - Tl_baseline);
+Ubaro_baseline = cell2mat(uvel_baro_scenarios(i,1));
+Vbaro_baseline = cell2mat(vvel_baro_scenarios(i,1));
+UdT_baro_baseline = sqrt(Ubaro_baseline.^2 + Vbaro_baseline.^2) .* (Tbl_baseline - Tl_baseline);
+
+
+for j = 1:sz(2)
+
+%get the current velocity, theta, salt
+Ubl = cell2mat(Ubl_scenarios(i,j));
+Vbl = cell2mat(Vbl_scenarios(i,i));
+Tbl = cell2mat(Tbl_scenarios(i,j));
+Sbl = cell2mat(Sbl_scenarios(i,j));
+Tl  = T0 + lambda*topo - gamma*Sbl; %liquidus temperature in BL
+Ubaro = cell2mat(uvel_baro_scenarios(i,j));
+Vbaro = cell2mat(vvel_baro_scenarios(i,j));
+
+%compute relative melt contributions
+UdT = sqrt(Ubl.^2 + Vbl.^2) .* (Tbl - Tl);
+UdT_noVel =  sqrt(Ubl_baseline.^2 + Vbl_baseline.^2) .* (Tbl - Tl);
+UdT_noTemp = sqrt(Ubl.^2 + Vbl.^2) .* (Tbl_baseline - Tl_baseline);
+UdT_barotropic = sqrt(Ubaro.^2 + Vbaro.^2) .* (Tbl_baseline - Tl_baseline);
+
+relmelt(j) = nanmean(UdT(idx)) / nanmean(UdT_baseline(idx)); 
+relmelt_noTemp(j) = nanmean(UdT_noTemp(idx)) / nanmean(UdT_baseline(idx));
+relmelt_noVel(j) = nanmean(UdT_noVel(idx)) / nanmean(UdT_baseline(idx));
+relmelt_baro(j)  = nanmean(UdT_barotropic(idx)) / nanmean(UdT_baro_baseline(idx));
 
 end %end loop over runs
-end %end gendata loop
-
-%%%%%%%%%%%%%%%%% Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-width = 0.45;
-ncols = 2;
-colgap = 0.07;
-startx = (1 -width*ncols - (ncols-1)*colgap)/2;
-starty = 0.01;
-height = 1/(sz+1);
-positions = zeros(4, ncols, sz);
-for p = 1:sz
-for q = 1:ncols
-positions(:,q,p) = [startx + (q-1)*colgap + (q-1)*width, starty + (p-1)*height, width, height];
-end
-end
-colmap = lighter_blue_parula(100,0.2);
-colbar_ypos = 0.93;
-colbar_xpos = [startx, startx + colgap + width,startx + 2*colgap + 2*width,startx + 3*colgap + 3*width];
-colbar_width = width; cbar_fontsize = 12;
+plot([34,34],  [0.2, 1.4], 'k--', 'linewidth', 1.5, 'handlevisibility', 'off'); %plot the location of top of ridge
+plot(84 - extent, relmelt, 'o-', 'color', plotcolor1, 'markerfacecolor', plotcolor1);
+plot(84 - extent, relmelt_noTemp, 'o-', 'color', plotcolor2, 'markerfacecolor', plotcolor2);
+plot(84 - extent, relmelt_baro, 'o--', 'color', plotcolor2, 'markerfacecolor', plotcolor2);
+plot(84 - extent, relmelt_noVel, 'o-', 'color', plotcolor3, 'markerfacecolor', plotcolor3);
 
 
-% Column 1
-%
-for p = 1:sz
-ax(1,p) = subplot('Position', squeeze(positions(:,1,sz+1-p)));
-melt = cell2mat(melt_scenarios(p));
-melt = saturate(melt, 120, 0);
-topo = squeeze(cell2mat(topo_scenarios(p)));
-melt(topo == 0) = nan;
-contourf(-Y/1e3,X/1e3,melt, 50, 'linestyle', 'none');
-box on
-hold on
-%add ridge crest and inner cavity
-plot(-[50, 50], [0, max(X/1e3)],'--', 'color', [0.5, 0.5, 0.5])
-plot(-[30, 30], [0, max(X/1e3)],'w--')
-colormap(ax(1,p), colmap)
-xticks([]);
-yticks([]);
-if p == 1
-        a = colorbar;
-        a.Location = 'northoutside';
-        a.Position(1)=colbar_xpos(1);
-        a.Position(2)=colbar_ypos;
-        a.Label.String = 'melt rate (m/yr)';
-        a.FontSize = 10;
-        a.Label.FontSize = cbar_fontsize;
-        a.Label.Interpreter = 'latex';
-end
+%tidy plots
+xlim([0, 45])
+ylabel('Relative change', 'Interpreter', 'latex', 'FontSize', 12);
+if i == 3
 
-%add bsf
-stream = cell2mat(bsf_scenarios(p));
-streamsm = smooth2a(stream, 2,2);
-axnew = axes;
-axnew.Position = ax(1,p).Position;
-[C,h] =contour(-Y/1e3,X/1e3, streamsm, [-0.7, -0.5, -0.3, -0.1], 'k');
-%clabel(C,h);
-hold on
-streamsm(1:4,:) = nan; streamsm(end-3:end,:) = nan; streamsm(:,1:60) = nan; streamsm(:,end-4:end) = nan; %remove borders and near Gl where stream is messy
-[C,h] =contour(-Y/1e3,X/1e3, streamsm, [0,0], 'r');
-[C,h] =contour(-Y/1e3,X/1e3, streamsm, [0.05,0.05], 'g');
+txt200= text(0.1, 0.725,"$W = 200$~m", 'interpreter', 'latex', 'FontSize', 12) ;
+ylim([0.7, 1.1])
+text(-10,1.2, "(c)", 'Interpreter', 'latex', 'FontSize', 12)
+xlabel('$l_c$ (km)', 'Interpreter', 'latex', 'FontSize', 12);
 
-
-xticks([]);
-yticks([]);
-set(axnew, 'color', 'none')
+else
+txt150 = text(0.1, 1.3,"$W = 150$~m", 'interpreter', 'latex', 'FontSize', 12) ;
+ax = gca; ax.XTickLabels = cell(0,1);
+ylim([0.2, 1.4])
+text(-10,1.4, "(b)", 'Interpreter', 'latex', 'FontSize', 12)
+legend({"$\mathcal{M}$", "$U_e$","$\bar{U}_{e}$", "$\Delta T_e$"}, 'location', 'southwest','interpreter', 'latex', 'FontSize', 12)
 
 end
-
+end
 
 %
-% Column 2
+% Save figure
 %
-
-for p = 1:sz
-ax(2,p) = subplot('Position', squeeze(positions(:,2,sz+1-p)));
-TMS = cell2mat(merid_theta_scenarios(p));
-TMS = saturate(TMS, 1.3, -1.2);
-contourf(max(Y) - Y,-Z, TMS',30, 'linestyle', 'none');
-hold on
-topo = cell2mat(topo_scenarios(p));
-plot(max(Y) - Y, topo(merid_idx, :), 'k', 'linewidth', 1)
-%fill the topo
-%fx = [max(Y) - Y,flip(max(Y) - Y)];
-%fy = [topo(merid_idx,:), zeros(size(topo(merid_idx,:)))];
-%fill(fx,fy, 'w')
-
-plot(max(Y) - Y, bathy(merid_idx, :), 'k', 'linewidth', 1)
-xlim([4*1e4, Y(end)])
-ylim([-1100,-300])
-colormap(ax(2,p), colmap)
-xticks([]);
-yticks([]);
-if p == 1
-        b = colorbar;
-        b.Location = 'northoutside';
-        b.Position(1)=colbar_xpos(2);
-        b.Position(2)=colbar_ypos;
-        b.FontSize = 10;
-        b.Label.String = '$\Theta$ (${}^\circ$C)';
-        b.Label.FontSize = cbar_fontsize;
-        b.Label.Interpreter = 'latex';
-
+if save_flag
+%saveas(gcf, "plots/figure6", 'epsc')
+saveas(gcf, "plots/figure6.png")
 end
 
-%add ridge crest and inner cavity
-plot(Y(end)-1e3*[50, 50], [-1100,-300],'--', 'color', [0.5, 0.5, 0.5])
-plot(Y(end)-1e3*[30, 30], [-1100,-300],'w--')
-
-%add salinity contours
-axnew = axes;
-axnew.Position = ax(2,p).Position;
-SMS = cell2mat(merid_salt_scenarios(p));
-[C,h] =contour(max(Y) - Y,-Z , SMS', 34.2:0.2:34.6, 'k');
-xticks([]);
-yticks([]);
-set(axnew, 'color', 'none')
-xlim([4*1e4, Y(end)])
-ylim([-1100,-300])
-
-end %end loop over runs
+%
+% extra plots: zonal average barotropic SF, baroclinic SF, heat content
+%
+%figure(2); clf; 
+%A = parula(sz(2)+1); %colourmap
+%
+%for i = 1:sz(1) %W = 100, 150, 200
+%for j = 1:sz(2)
+%legendinfo{j} = ['$\ell_c = ' num2str(84 - extent(j)) '$ km'];
+%% barotropic sf
+%subplot(3,3,3*i - 2); hold on; box on
+%stream = cell2mat(bsf_scenarios(i,j));
+%stream_lat = mean(stream,1);
+%plot(128 - Y/1e3, stream_lat, 'color', A(j,:));
+%xlim([0, 128])
+%title(['Zonal barotropic SF, W = ' num2str(W(i))]);
+%
+%
+%%baroclinic sf
+%subplot(3,3,3*i - 1); hold on; box on
+%stream = cell2mat(bcsf_scenarios(i,j));
+%stream_lat = mean(stream,1);
+%plot(128 - Y/1e3, stream_lat, 'color', A(j,:));
+%xlim([0, 128])
+%title(['Zonal baroclinic SF, W = ' num2str(W(i))]);
+%ylim([-0.01, 0.01])
+%
+%
+%%heat content (third column)
+%subplot(3,3,3*i); hold on; box on
+%Tbl = cell2mat(Tbl_scenarios(i,j));
+%Tbl_lat = smooth(squeeze(nanmean(Tbl)));
+%Tbl_lat(ceil(extent(j)*1e3/dx):end) = nan; %outside shelf 
+%plot(128 - Y/1e3, Tbl_lat, 'color', A(j,:));
+%xlim([0, 128])
+%title(['Boundary layer heat, W = ' num2str(W(i))]);
+%
+%end %end loop over runs within each W value
+%
+%end %end loop over W values
+%
+%subplot(3,3,3); legend(legendinfo, 'interpreter', 'latex', 'location', 'southwest'); 
 

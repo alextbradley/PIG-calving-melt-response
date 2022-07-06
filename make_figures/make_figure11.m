@@ -1,85 +1,45 @@
-%Make figure 11 of the PIG calving manuscript: plots of barotropic stream function (contours) and water column thickness (colours) for each of the scenarios.
+%Make figure 11 of the PIG calving manuscript: description of calving experiments
+% (a) Satellite image of PIG with grounding line, 2009, 2012 ice fronts, synthetic ice fronts and north south cavities labelled. Inset: ice-bathy gap along dashed line in main figure.
+% (b) Satellite image of PIG with cavity water column thickness in colours.
 
 % NB: Many of the data files referred to in this script are too large to be hosted online. These files are hosted internally as BAS.
 % Please email Alex Bradley (aleey@bas.ac.uk) to obtain a copy.
 %Alex Bradley (aleey@bas.ac.uk) 27/05/2021. MIT license.
-
-%
-% Flags
-%
-gendata = 1; %specify whether to pass through the generate data loop
-save_flag = 0;
-
-%
-% Preliminaries
-%
-addpath("plot_tools");
+saveflag = 0; %save toggle
+addpath("plot_tools")
 plot_defaults
-label_size = 11;
-ax_fontsize = 11;
-figure(2); clf;
-fig = gcf; fig.Position(3:4) = [1085, 540];
-%plot colours
-background_color = 0.8*[1,1,1]; %ice color
-background_color = [1,1,1];
-ocean_color = [226,249, 255]/255;
-cols = [7,43, 184;
-        184, 7, 43]/255; %colours for each different bc
-bathycontourcolor = [255,0,255]/255;
-
+plotcolor2 = [0,1,1]; %overwrite defaults 
+plotcolor3 = [1,0,1];
 %
-% Data locations
+% Data info
 %
-rootdir = '/data/oceans_output/shelf/aleey/mitgcm/rPIG/rPIG_'; %output data NOT in github repo (contact for copy)
 topodir = '../gendata_realistic/topo_files/';
 bathypath = '../gendata_realistic/bathy_files/bathymetry.shice';
-
-%grid details
-nx=360; % number of grid cells along longitudinal direction
-ny=320; % number of grid cells along latitudinal direction
-nz=120; % number of vertical grid cells
-dx=400;
-dy=400;
-dz=10;
+rootdir = '/data/oceans_output/shelf/aleey/mitgcm/rPIG/rPIG_'; %output data NOT in github repo (contact for copy)
+nx = 360;
+ny = 320;
+dx = 400;
+dy = 400;
 X = ncread(strcat(rootdir, "078", '/run/state2D.nc'), 'LONGITUDE');
-Y = ncread(strcat(rootdir, "078", '/run/state2D.nc'), 'LATITUDE');
+Y = ncread(strcat(rootdir, "078", '/run/state2D.nc'), 'LATITUDE'); %stereographic co-ords
 [XX,YY] = meshgrid(X,Y);
-YYt = YY';
-
-%put onto the latlon grid
-xshift = 870;
-yshift = -15000;
-lambdashift = -101;
-phishift = -0.07;
-XX = XX + xshift;
-YY = YY + yshift;
-[phi, lambda] = polarstereo_inv(XX,YY);
-lambda = lambda + lambdashift;
-phi = phi + phishift;
-lambda = double(lambda);
-phi = double(phi);
-
-
-%parameters
-secs_per_year = 365.25*24*60*60;
-density_ice = 918.0;
-
-%time details
-ntout1 = 11;
-ntout2 = 12; %define time period to average over
-
+x = dx:dx:nx*dx;
+y = dy:dy:ny*dy; %stereographic co-ords with zero origin
+[xx,yy] = meshgrid(x,y);
 
 %
-% Generate data loop
+% get grid in image space
 %
-if gendata
-run_nos = ["078", "082", "083", "084", "085", "086"];
-%run_nos = ["141", "142", "143", "144", "145", "146"];
-sz = length(run_nos);
-
-%setup storage
-bsf_scenarios = cell(1,sz);
-topo_scenarios = cell(1,sz);
+load('image_to_model_points.mat', 'ximage', 'yimage', 'xmod', 'ymod');
+[model2image, image2model] = genmaps_image2model(ximage, yimage, xmod, ymod); %maps from model to image and vice
+yi = zeros(size(yy));
+xi = zeros(size(xx));
+for i = 1:320
+cc = [xx(i,:); yy(i,:)];
+ci = model2image(cc);
+yi(i,:) = ci(2,:);
+xi(i,:) = ci(1,:);
+end
 
 %load bathy
 bathyfid = fopen(bathypath);
@@ -87,162 +47,290 @@ bathy = fread(bathyfid, 'real*8', 'b');
 bathy = reshape(bathy, [nx,ny]);
 bathy = double(bathy);
 
-%loop over runs
-for i = 1:sz
-%draft
-topo_fname=  ['shelfice_topo_scn', num2str(i), '.shice'];
-topo_fid = fopen(strcat(topodir, '/',topo_fname));
-topo = fread(topo_fid, 'real*8', 'b');
-topo = reshape(topo, [nx,ny]);
+%compute distance along contour
+figure(1); clf; hold on
+%bathy(bathy ==0) = nan;
+[cgl,~] = contour(x,y, bathy',[0,0], 'linestyle', 'none');
+[c750,~] = contour(x,y, bathy',[-750,-750], 'linestyle', 'none');
+
+A = lines(6);
+topo_scenarios = cell(6,1);
+for i = 1:6
+    topo_fname=  ['shelfice_topo_scn', num2str(i), '.shice'];
+    topo_fid = fopen(strcat(topodir, '/',topo_fname));
+    topo = fread(topo_fid, 'real*8', 'b');
+    topo = reshape(topo, [nx,ny]);
+    %engineer topo so that grounding line doesn't show up at zero contour (i.e. only ice front)
+    for p = 2:nx-1
+        for q = 2:ny-1
+            if any( bathy(p,q+1) == 0 || bathy(p, q-1) == 0 || bathy(p+1,q) == 0 || bathy(p-1,q) == 0)
+                topo(p,q) = nan;
+            end
+        end
+    end
+
 topo_scenarios{i} = topo;
-
-%velocities
-UVEL_fname = strcat(rootdir, run_nos(i), '/run/stateUvel.nc');
-UVEL = ncread(UVEL_fname, 'UVEL', [1,1,1,ntout1], [Inf, Inf, Inf, 1+ntout2 - ntout1]);
-VVEL_fname = strcat(rootdir, run_nos(i), '/run/stateVvel.nc');
-VVEL = ncread(VVEL_fname, 'VVEL', [1,1,1,ntout1], [Inf, Inf, Inf, 1 + ntout2 - ntout1]);
-VVEL = squeeze(mean(VVEL,4));
-UVEL = squeeze(mean(UVEL,4));
-nt = length(ncread(UVEL_fname, 'TIME'))
-
-
-%compute bsf
-vvel = squeeze(sum(VVEL, 3)) * dz; %units m^2 /s
-stream=zeros(size(vvel));
-stream(nx,:)=vvel(nx,:)*dx;
-for p=nx-1:-1:1
- stream(p,:)=stream(p+1,:) + vvel(p,:)*dx;
-end
-stream = stream/1e6; %convert to sv
-bsf_scenarios{i} = stream;
-
-end
 end
 
-%
-% Plot preliminaries
-%
-width = 0.30;
-height = 0.44;
-gapx = 0.02;
-gapy = 0.02;
-ncols = 3;
-nrows = 2;
-startx = (1 -width*ncols - (ncols-1)*gapx)/2;
-starty = 1-(1 -height*nrows - (nrows -1)*gapy)/2;
-starty = 0.97;
-positions = zeros(4, nrows* ncols);
-for i = 1:nrows*ncols
-q = 1 + mod(i-1,ncols); %index in x direction
-p = ceil(i/ncols); %index in y directio
-positions(:,i) = [startx + (q-1)*gapx + (q-1)*width, starty - p*height - (p-1)*gapy, width, height];
+%line cross section definition
+%xidx = [102,334];
+%yidx = [160,41];
+%xline_idx = min(xidx):max(xidx); %x indices of points on the line
+%yline_idx = round(diff(yidx)/diff(xidx) * (xline_idx - xidx(end)) + yidx(end));%corresponding y indices
+%xline_idx = xline_idx(50:200);
+%yline_idx = yline_idx(50:200); %remove some entries
+np = 50;
+xline_idx = round(linspace(102,334,np));
+yline_idx = round(linspace(160,51, np));
+
+sline =  sqrt((x(xline_idx) - x(xline_idx(1))).^2 + (y(yline_idx) - y(yline_idx(1))).^2); %arclength along line
+hold on
+xline = x(xline_idx);
+yline = y(yline_idx);
+plot(xline, yline, 'k--')
+
+%compute distance along line
+snap_distance = zeros(1,6);
+xsnap = zeros(1,6);
+ysnap = zeros(1,6);
+for i = 1:6
+[c,h] = contour(x,y,cell2mat(topo_scenarios(i))', [0,0], 'color', A(i,:));
+
+%store this info
+topo_front_data{i} = c;
+
+%remove any lvels
+c1 = c(1,:);
+c2 = c(2,:);
+c1 = c1(c1 ~=0);
+c2 = c2(c1 ~=0); %remove level spec
+
+%loop over every co-ordinate in the contour, find the nearest pt in the line, and ge tthe min of all of these
+min_idx = 1;
+min_dist = 1e10; %large to start with
+for j = 1:length(c1)
+[val, idx] = min(abs((xline - c1(j)).^2 + (yline - c2(j)).^2));
+if val < min_dist
+	min_dist = val;
+	min_idx = idx;
+	
 end
-cmap = lighter_blue_parula(100,0.1);
-labels = ["(a)", "(b)", "(c)", "(d)", "(e)", "(f)"];
-
-
-
-%
-% Make plots sequentially
-%
-for q = 1:sz
-%get data
-icetopo = cell2mat(topo_scenarios(q));
-bsf = cell2mat(bsf_scenarios(q));
-topo = cell2mat(topo_scenarios(q));
-h = topo - bathy;
-h(bathy == 0) = nan;
-invh = 1./h;
-invh = saturate(invh, 0.011, 0);
-bsf(bathy == 0) = nan;
-bsf_sat = saturate(bsf, 0.45, -0.4);
-
-%bottom layer: inverse water column thickness
-axs(q) = subplot('Position',positions(:,q));
-contourf(lambda,phi,invh', 21, 'linestyle', 'none')
-%contourf(lambda, phi, bsf_sat', 20, 'linestyle', 'none'); cmap = redblue(100);
-colormap(axs(q),cmap);
-if q == 1
-cb = colorbar;
-cb.Location = 'west';
-%cb.Position(1) = positions(1,q) + 0.005;  %left of plot
-cb.Position(1) = 0.3;
-cb.Position(2) = 0.815;
-cb.Position(3) = 0.012; %make it thin
-cb.Position(end) = 0.145;
-cb.Color = 0*[1,1,1]; %set color to white/blck
-cb.Label.String = '$1/h$ (m\textsuperscript{-1})';
-%cb.Label.String = 'BSF (Sv)';
-cb.Label.FontSize = 12;
-cb.Label.Position(2) = 0.006;
-cb.Label.Interpreter = 'latex';
 end
-
-
-%top layer: contours of bsf, GL and ice front
-axnew(q) = axes; hold on %new axes for contours
-axnew(q).Position = axs(q).Position;
-[C,h] =contour(lambda, phi, 1e3 * invh', [0.5, 1.0, 1.5, 2:2:10],'color',  0.8*[1,1,1], 'linewidth', 1);% clabel(C,h)
-[C,h] =contour(lambda, phi, bsf', -0.5:0.1:0.5, 'k', 'linewidth', 1);  clabel(C,h)
-%[C,h] =contour(lambda, phi, h', 0:100:1000, 'k', 'linewidth', 0.75);
-
-contour(lambda,phi,bathy', [0,0], 'k', 'linewidth', 1.5) %grounding line
-contour(lambda,phi,icetopo', [0,0], 'k', 'linewidth', 1.5) %ice front
-
-        
-%tidy plot
-grid(axs(q), 'on');
-axs(q).XLim= [-102.6, -98.8];
-axs(q).YLim =[-75.45,-74.75];
-axnew(q).XLim = axs(q).XLim;
-axnew(q).YLim = axs(q).YLim;
-axnew(q).Visible = 'off'; %make top layer invisible - see colours on bottom layer
-set(axs(q),'Color',background_color)
-axs(q).YTick = -75.4:0.1:-74.8;
-if mod(q,3) == 1 %label x axis on bottom row
-axs(q).YTickLabel = {"24'", "18'",  "12'", "6'",  "75S", "54'", "48'"};
-else %top row no labels
-axs(q).YTickLabel = cell(length(axs(q).YTick),1);
+plot(xline(min_idx), yline(min_idx), 'ro-', 'markerfacecolor','r');
+snap_distance(i) = sline(min_idx);
+xsnap(i) = xline(min_idx);
+ysnap(i) = yline(min_idx);
 end
-axs(q).XTick = [-102.5:0.5:-99];
-if floor((q-1)/3) == 1 %label y axis on left-most column only
-axs(q).XTickLabel = {"30'", "102W",  "30'", "101W", "30'", "100W", "30'", "99W"};
-else
-axs(q).XTickLabel = cell(length(axs(q).XTick),1);
-end
+snap_distance = snap_distance - snap_distance(1); %take relative to 2012 topo
 
-%add the definitions of the two cavity regions
+%cross section
+ycrossidx = 5:140;
+xcrossidx = 256*ones(1,length(ycrossidx));
+xcross = x(xcrossidx);
+ycross = y(ycrossidx);
+
+
+%get inner cavity contours
 realistic_inner_cavity_definition; %bring inner cavity definition into scope (a1,b1,a2,b2)
-[XXns,YYns] = meshgrid(X,Y);
-in1 = inpolygon(XXns',YYns', a1,b1);
-in2 = inpolygon(XXns',YYns', a2,b2);
-idx1 = (icetopo < 0) & in1;
-idx2 = (icetopo < 0) & in2;
-%if ((q == 1) || (q == 6))
-bsf_copy = bsf;
-bsf_copy(idx1) = 0.01;
-bsf_copy(~idx1) =0;
-contour(lambda,phi,bsf_copy',[.01,.01], '--', 'linewidth', 1.5, 'linecolor', 'c')
-bsf_copy = bsf_sat;
-bsf_copy(idx2) = 0.01;
-bsf_copy(~idx2) =0;
-contour(lambda,phi,bsf_copy',[.01,.01], '--', 'linewidth', 1.5, 'linecolor', 'm')
-%end
+in1 = inpolygon(XX',YY', a1,b1);
+in2 = inpolygon(XX',YY', a2,b2);
+idx1 = (topo < 0) & in1;
+idx2 = (topo < 0) & in2;
+A = zeros(nx,ny);
+A(idx1) = 1;
+[cin1,~] = contour(x,y, A',[1,1], 'linestyle', 'none');
+cin1 = cin1(:, (cin1(1,:)~=1)); %remove levels
+A(idx2) = 1;
+A(~idx2) = 0;
+[cin2,~] = contour(x,y, A',[1,1], 'linestyle', 'none');
+cin2 = cin2(:, (cin2(1,:)~=1)); %remove levels
 
-txt(q) = text(-102.5,-75.38, labels(q), 'FontSize', 14, 'Interpreter', 'latex');
+%north and south transect lines
+xlineidxN = round(linspace(102,334,np)); %north line x indices
+ylineidxN = round(linspace(170,81, np)); %north line y indices
+xlineidxS = round(linspace(102,334,np)); % etc
+ylineidxS = round(linspace(140,31, np)); % etc
+xlineN = x(xlineidxN); 		 	 % north line x co-ordinates
+ylineN = y(ylineidxN);		  	 % north line y co-ordinates
+xlineS = x(xlineidxS); 		 	 % south line x co-ordinates
+ylineS = y(ylineidxS);		  	 % south line y co-ordinates
 
-end %end loop over runs
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%% make the plot %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%open the image
+t = Tiff('PIG-S2-NovDec2020.tif', 'r'); %!! not in git repo!!
+imageData = read(t);
+fig1 = figure(1); clf; hold on
+imshow(imageData);
+ax = gca;
+%add the reference points
+load('image_to_model_points.mat', 'ximage', 'yimage', 'xmod', 'ymod');
+
+%add the 2012 grounding line 
+[model2image, image2model] = genmaps_image2model(ximage, yimage, xmod, ymod); %maps from model to image and vice versa
+c_image_GL = model2image(cgl); %put gl model gl position onto image
+scatter(ax, c_image_GL(1,:), c_image_GL(2,:), 4,'k', 'filled')
+%contour(xi, yi, bathy', [0,0], 'k', 'linewidth', 2)
+
+%add the fronts
+colmap = lines(6);
+colmap(1,:) = [1,0,0]; %make first red
+colmap(end,:) = [0,1,0]; %last row green
+for i = 6:-1:1 %reverse order so 2009 on top
+    cfront = cell2mat(topo_front_data(i));
+    c_image_front = model2image(cfront);
+    scatter(c_image_front(1,:), c_image_front(2,:), 5, colmap(i,:), 'filled');
+end
+
+%add the calving front measurement line
+cl = [xline; yline];
+cl_image = model2image(cl);
+plot(cl_image(1,:), cl_image(2,:), 'b--');
+
+%add the north south cross section lines
+clN = [xlineN; ylineN];
+cl_imageN = model2image(clN);
+plot(cl_imageN(1,:), cl_imageN(2,:), '--', 'color', 0.6*[1,1,1]);
+clS = [xlineS; ylineS];
+cl_imageS = model2image(clS);
+plot(cl_imageS(1,:), cl_imageS(2,:), '--','color', 0.6*[1,1,1]);
+
+%add the calving front measurement positions
+csnap = [xsnap; ysnap];
+csnap_image = model2image(csnap);
+plot(csnap_image(1,:), csnap_image(2,:), 'ko', 'markerfacecolor', 'k');
+
+%add the ridge cross section
+cx = [xcross; ycross];
+cx_image = model2image(cx);
+plot(cx_image(1,:), cx_image(2,:), 'k--')
+
+%add the inner cavity definition
+cin1_img = model2image(cin1); 
+cin2_img = model2image(cin2);
+plot(cin1_img(1,:), cin1_img(2,:), '--','color', plotcolor2);
+plot(cin2_img(1,:), cin2_img(2,:), '--', 'color',plotcolor3);
+
+
+%tidy plot
+ylim([2194, 14847])
+xlim([2000,12000])
+
+%rotate
+camroll(-90);
+
+%add the A,B pts and 2009, 2020 front labels
+ax1 = gca;
+ptAA = text(ax1,9800,8000, 'A', 'FontSize', 12, 'FontWeight', 'bold');
+ptBB = text(ax1, 4300,8800, 'B', 'FontSize', 12, 'FontWeight', 'bold');
+txtN = text(ax1, 5200, 6400, 'North', 'FontSize', 12, 'Interpreter', 'latex');
+txtS = text(ax1, 8700, 6000, 'South', 'FontSize', 12, 'Interpreter', 'latex');
+f2009 = text(ax1, 4000,13200, '2009', 'FontSize',12, 'color', colmap(1,:));
+f2020 = text(ax1, 7500,11700, '2020', 'FontSize',12, 'color', colmap(2,:));
+
+
+
+%add the gap width as inset axes
+topo = cell2mat(topo_scenarios(1));
+bathyline = nan(1,length(ycrossidx));
+topoline  = nan(1,length(ycrossidx));
+sline =  sqrt((x(xcrossidx) - x(xcrossidx(1))).^2 + (y(ycrossidx) - y(ycrossidx(1))).^2); %arclength along line
+
+for i = 1:length(bathyline)
+if bathy(xcrossidx(i), ycrossidx(i)) ~=0
+bathyline(i) = bathy(xcrossidx(i), ycrossidx(i));
+end
+if topo(xcrossidx(i), ycrossidx(i)) ~=0
+topoline(i)  = topo(xcrossidx(i), ycrossidx(i));
+end
+end
+idx = ~isnan(bathyline);
+sline = sline(idx);
+sline = sline - sline(1);
+bathyline = bathyline(idx);
+topoline = topoline(idx);
+ax2 = axes; hold on; box on
+ax2.Position = [0.55, 0.07, 0.3, 0.2];
+fill(ax2,[0, 22, 22, 0], [0, 0, 400, 400], 'm','linestyle', 'none', 'FaceAlpha', 0.3);
+fill(ax2,[22, 45, 45, 22], [0, 0, 400, 400], 'c','linestyle', 'none', 'FaceAlpha', 0.3);
+plot(ax2,sline/1e3,topoline - bathyline, 'color', 'k', 'linewidth', 2);
+
+ax2.XLabel.String = 'distance (km)';
+ax2.YLabel.String = 'gap (m)';
+ax2.XLabel.Interpreter = 'latex';
+ax2.XLabel.FontSize = 12;
+ax2.YLabel.Interpreter = 'latex';
+ax2.YLabel.FontSize = 12;
+ptA2 = text(ax2, 0.5,30, 'A', 'FontSize', 10, 'FontWeight', 'bold');
+ptB2 = text(ax2, 42.2,30, 'B', 'FontSize', 10, 'FontWeight', 'bold');
 
 %
-% macro tidy
+% Make a second figure with the 1/h contours
 %
-fig = gcf; fig.Position(3:4) = [1280, 687.333];
+fig2 = figure(2);clf; hold on;  fig2.Position = fig1.Position;
+imshow(imageData);
+
+%add the inverse water column thickness
+fid = fopen("../gendata_realistic/bathy_files/bathymetry.shice");
+bathy = fread(fid, 'real*8', 'b');
+bathy = reshape(bathy, [nx,ny]);
+bathyng = bathy; bathyng(bathy ==0) = nan;
+
+fid = fopen("../gendata_realistic/topo_files/shelfice_topo_scn1.shice");
+topo2009 = fread(fid, 'real*8', 'b');
+topo2009 = reshape(topo2009, [nx,ny]);
+gap = topo2009 - bathy;
+gap(bathy == 0) = nan;
+invgap = (1./gap);
+invgap = saturate(invgap, 0.01,0);
+hold on
+contourf(xi, yi, invgap', 30, 'linestyle', 'none');
+d = colorbar;
+d.Label.String = '$1/h$ (m\textsuperscript{-1})';
+d.Label.Interpreter = 'latex';
+d.Label.FontSize = 12;
+d.Position = [0.85, 0.28, 0.03, 0.5];
+
+
+ax = gca;
+%colormap(ax, viridis);
+scatter(ax, c_image_GL(1,:), c_image_GL(2,:), 4,'k', 'filled')
+%contour(xi, yi, bathy', [0,0], 'k', 'linewidth', 2)
+
+%add the fronts
+for i = 6:-1:1
+    cfront = cell2mat(topo_front_data(i));
+    c_image_front = model2image(cfront);
+    scatter(c_image_front(1,:), c_image_front(2,:), 5, colmap(i,:), 'filled');
+end
+%add the inner cavity definition
+cin1_img = model2image(cin1); 
+cin2_img = model2image(cin2);
+plot(ax,cin1_img(1,:), cin1_img(2,:), '--','color', plotcolor2);
+plot(ax,cin2_img(1,:), cin2_img(2,:), '--', 'color',plotcolor3);
+
+
+%tidy plot
+ylim([2194, 14847])
+xlim([2000,12000])
+
+%rotate
+camroll(-90);
+
 
 %
-% Save
+% save flag
 %
- set(gcf, 'color', 'w')
-if save_flag
-%saveas(gcf, "plots/figure11.eps", "epsc")
-saveas(gcf, "plots/figure11.png")
+set(fig1, 'color', 'w')
+set(fig2, 'color', 'w')
+if saveflag
+%saveas(fig1, "plots/figure10a.eps", "epsc");
+%saveas(fig2, "plots/figure10b.eps", "epsc");
+saveas(fig1, "plots/figure10a.png");
+saveas(fig2, "plots/figure10b.png");
 end

@@ -1,4 +1,4 @@
-%Make figure 12 of the PIG calving manuscript: realistic domain melt rate (2009 geometry) and non-cumulative melt rate anomalies. NB: make_figure10 must be ran first to get the definition of the inner cavity.
+%Make figure 12 of the PIG calving manuscript: plots of barotropic stream function (contours) and water column thickness (colours) for each of the scenarios.
 
 % NB: Many of the data files referred to in this script are too large to be hosted online. These files are hosted internally as BAS.
 % Please email Alex Bradley (aleey@bas.ac.uk) to obtain a copy.
@@ -64,17 +64,21 @@ phi = double(phi);
 secs_per_year = 365.25*24*60*60;
 density_ice = 918.0;
 
+%time details
+ntout1 = 11;
+ntout2 = 12; %define time period to average over
+
 
 %
 % Generate data loop
 %
 if gendata
-run_nos = ["078", "082", "083", "084", "085", "086"]; ntout1 = 11; ntout2 = 12;
-%run_nos = ["141", "142", "143", "144", "145", "146"]; ntout1 = 6; ntout2 = 7;
+run_nos = ["078", "082", "083", "084", "085", "086"];
+%run_nos = ["141", "142", "143", "144", "145", "146"];
 sz = length(run_nos);
 
 %setup storage
-melt_scenarios = cell(1,sz);
+bsf_scenarios = cell(1,sz);
 topo_scenarios = cell(1,sz);
 
 %load bathy
@@ -92,19 +96,31 @@ topo = fread(topo_fid, 'real*8', 'b');
 topo = reshape(topo, [nx,ny]);
 topo_scenarios{i} = topo;
 
+%velocities
+UVEL_fname = strcat(rootdir, run_nos(i), '/run/stateUvel.nc');
+UVEL = ncread(UVEL_fname, 'UVEL', [1,1,1,ntout1], [Inf, Inf, Inf, 1+ntout2 - ntout1]);
+VVEL_fname = strcat(rootdir, run_nos(i), '/run/stateVvel.nc');
+VVEL = ncread(VVEL_fname, 'VVEL', [1,1,1,ntout1], [Inf, Inf, Inf, 1 + ntout2 - ntout1]);
+VVEL = squeeze(mean(VVEL,4));
+UVEL = squeeze(mean(UVEL,4));
+nt = length(ncread(UVEL_fname, 'TIME'))
 
-%melt rates
-state2D_fname = strcat(rootdir, run_nos(i), '/run/state2D.nc');
-melt = ncread(state2D_fname, 'SHIfwFlx', [1, 1, ntout1], [Inf, Inf, 1+ntout2- ntout1]);
-melt = mean(melt, 3); %average over months ntout1 to ntout2
-melt = -melt * secs_per_year / density_ice;
-melt_scenarios{i} = melt;
+
+%compute bsf
+vvel = squeeze(sum(VVEL, 3)) * dz; %units m^2 /s
+stream=zeros(size(vvel));
+stream(nx,:)=vvel(nx,:)*dx;
+for p=nx-1:-1:1
+ stream(p,:)=stream(p+1,:) + vvel(p,:)*dx;
+end
+stream = stream/1e6; %convert to sv
+bsf_scenarios{i} = stream;
 
 end
 end
 
 %
-% Make the plot
+% Plot preliminaries
 %
 width = 0.30;
 height = 0.44;
@@ -124,77 +140,72 @@ end
 cmap = lighter_blue_parula(100,0.1);
 labels = ["(a)", "(b)", "(c)", "(d)", "(e)", "(f)"];
 
-%loop over runs
+
+
+%
+% Make plots sequentially
+%
 for q = 1:sz
+%get data
 icetopo = cell2mat(topo_scenarios(q));
-melt = cell2mat(melt_scenarios(q));
+bsf = cell2mat(bsf_scenarios(q));
+topo = cell2mat(topo_scenarios(q));
+h = topo - bathy;
+h(bathy == 0) = nan;
+invh = 1./h;
+invh = saturate(invh, 0.011, 0);
+bsf(bathy == 0) = nan;
+bsf_sat = saturate(bsf, 0.45, -0.4);
 
-%if baseline, store as such. Otherwise, get the anomaly
-if q == 1
-melt_diff = melt; 
-else
-melt_diff = melt - cell2mat(melt_scenarios(q-1)); %
-end
-melt_diff(icetopo == 0) = nan;
-if q == 1
-melt_diff_sat = saturate(melt_diff, 126,0);
-else
-melt_diff_sat = saturate(melt_diff, 22,-20);
-end
-
-
-%make plot
+%bottom layer: inverse water column thickness
 axs(q) = subplot('Position',positions(:,q));
-contourf(lambda,phi,melt_diff_sat', 20, 'linestyle', 'none')
-hold on
-contour(lambda,phi,icetopo', [0,0], 'k', 'linewidth', 1.5)
+contourf(lambda,phi,invh', 21, 'linestyle', 'none')
+%contourf(lambda, phi, bsf_sat', 20, 'linestyle', 'none'); cmap = redblue(100);
+colormap(axs(q),cmap);
 if q == 1
-        colormap(axs(q),cmap);
-else
-        colormap(axs(q),redblue);
+cb = colorbar;
+cb.Location = 'west';
+%cb.Position(1) = positions(1,q) + 0.005;  %left of plot
+cb.Position(1) = 0.3;
+cb.Position(2) = 0.815;
+cb.Position(3) = 0.012; %make it thin
+cb.Position(end) = 0.145;
+cb.Color = 0*[1,1,1]; %set color to white/blck
+cb.Label.String = '$1/h$ (m\textsuperscript{-1})';
+%cb.Label.String = 'BSF (Sv)';
+cb.Label.FontSize = 12;
+cb.Label.Position(2) = 0.006;
+cb.Label.Interpreter = 'latex';
 end
-if q == 1 || q==2
-c = colorbar;
-c.Location = 'west';
-c.Position(1) = positions(1,q) + 0.005; %relatvie horiztonal pos
-c.Position(2) = 0.80;
-c.Position(end) = 0.145;
-c.Color = 0*[1,1,1]; %set color to white/blck
-if q == 1
-    c.Label.String = 'melt rate (m/yr)';
-else
-    c.Label.String = 'anomaly (m/yr)';
-end
-c.Label.FontSize = 12;
-c.Label.Interpreter = 'latex';
-end
-xlim([-102.6, -99])
-ylim([-75.45,-74.75])
+
+
+%top layer: contours of bsf, GL and ice front
+axnew(q) = axes; hold on %new axes for contours
+axnew(q).Position = axs(q).Position;
+[C,h] =contour(lambda, phi, 1e3 * invh', [0.5, 1.0, 1.5, 2:2:10],'color',  0.8*[1,1,1], 'linewidth', 1);% clabel(C,h)
+[C,h] =contour(lambda, phi, bsf', -0.5:0.1:0.5, 'k', 'linewidth', 1);  clabel(C,h)
+%[C,h] =contour(lambda, phi, h', 0:100:1000, 'k', 'linewidth', 0.75);
+
+contour(lambda,phi,bathy', [0,0], 'k', 'linewidth', 1.5) %grounding line
+contour(lambda,phi,icetopo', [0,0], 'k', 'linewidth', 1.5) %ice front
+
+        
+%tidy plot
+grid(axs(q), 'on');
+axs(q).XLim= [-102.6, -98.8];
+axs(q).YLim =[-75.45,-74.75];
+axnew(q).XLim = axs(q).XLim;
+axnew(q).YLim = axs(q).YLim;
+axnew(q).Visible = 'off'; %make top layer invisible - see colours on bottom layer
 set(axs(q),'Color',background_color)
-        
-%add the open ocean
-bathynoice = bathy;
-bathynoice(icetopo < 0) = 0; %remove cavity
-bathynoice(bathy == 0) = 0; %remove grounded ice
-bathynoice(bathynoice ~= 0) = 1; %make constant
-cf = contourf(lambda, phi, bathynoice',[1,1]);
-idx = find((cf(1,:) == 1));
-c1 = cf(1,2:idx(2)-1);
-c2 = cf(2,2:idx(2)-1);
-fill(c1,c2,ocean_color, 'linewidth', 1.5, 'edgecolor', 'k');
-        
-%add 750m bathymetric contour
-%contour(lambda, phi, -1e-2*bathy', -1e-2*[-750, -750], 'color',bathycontourcolor, 'linewidth' ,1, 'linestyle', '--'); %he weird "* -1e-2" is to get bring -750 into range of colourar, avoid skewing it
-grid on
 axs(q).YTick = -75.4:0.1:-74.8;
-if mod(q,3) == 1
+if mod(q,3) == 1 %label x axis on bottom row
 axs(q).YTickLabel = {"24'", "18'",  "12'", "6'",  "75S", "54'", "48'"};
-else
+else %top row no labels
 axs(q).YTickLabel = cell(length(axs(q).YTick),1);
 end
-
 axs(q).XTick = [-102.5:0.5:-99];
-if floor((q-1)/3) == 1
+if floor((q-1)/3) == 1 %label y axis on left-most column only
 axs(q).XTickLabel = {"30'", "102W",  "30'", "101W", "30'", "100W", "30'", "99W"};
 else
 axs(q).XTickLabel = cell(length(axs(q).XTick),1);
@@ -203,36 +214,35 @@ end
 %add the definitions of the two cavity regions
 realistic_inner_cavity_definition; %bring inner cavity definition into scope (a1,b1,a2,b2)
 [XXns,YYns] = meshgrid(X,Y);
-
 in1 = inpolygon(XXns',YYns', a1,b1);
 in2 = inpolygon(XXns',YYns', a2,b2);
 idx1 = (icetopo < 0) & in1;
 idx2 = (icetopo < 0) & in2;
 %if ((q == 1) || (q == 6))
-melt_copy = melt_diff_sat;
-melt_copy(idx1) = 1;
-melt_copy(~idx1) =0;
-contour(lambda,phi,melt_copy',[1,1], '--', 'linewidth', 1.75, 'linecolor', 'c')
-melt_copy = melt_diff_sat;
-melt_copy(idx2) = 1;
-melt_copy(~idx2) =0;
-contour(lambda,phi,melt_copy',[1,1], '--', 'linewidth', 1.75, 'linecolor', 'm')
+bsf_copy = bsf;
+bsf_copy(idx1) = 0.01;
+bsf_copy(~idx1) =0;
+contour(lambda,phi,bsf_copy',[.01,.01], '--', 'linewidth', 1.5, 'linecolor', 'c')
+bsf_copy = bsf_sat;
+bsf_copy(idx2) = 0.01;
+bsf_copy(~idx2) =0;
+contour(lambda,phi,bsf_copy',[.01,.01], '--', 'linewidth', 1.5, 'linecolor', 'm')
 %end
 
-
-
-% add label
 txt(q) = text(-102.5,-75.38, labels(q), 'FontSize', 14, 'Interpreter', 'latex');
 
 end %end loop over runs
-fig = gcf; fig.Position(3:4) = [1280, 687.333];
 
+%
+% macro tidy
+%
+fig = gcf; fig.Position(3:4) = [1280, 687.333];
 
 %
 % Save
 %
-set(gcf, 'color', 'w');
+ set(gcf, 'color', 'w')
 if save_flag
-%saveas(gcf, "plots/figure12.eps", "epsc")
-saveas(gcf, "plots/figure12.png")
+%saveas(gcf, "plots/figure11.eps", "epsc")
+saveas(gcf, "plots/figure11.png")
 end

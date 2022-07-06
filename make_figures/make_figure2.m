@@ -176,6 +176,5 @@ text(p2, 34.653, -40, "(c)", 'FontSize', 12, 'Interpreter', 'latex')
 % save
 %
 if save_flag 
-%saveas(gcf, "plots/figure2", 'epsc')
-%saveas(gcf, "plots/figure2.png")
+saveas(gcf, '../../PIG-calving-melt-response-tex/figures/figureB_schematic.png')
 end

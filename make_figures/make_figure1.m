@@ -294,5 +294,5 @@ ax(3).YLabel.Interpreter = 'latex';
 % Save?
 %
 if saveflag
-saveas(gcf, 'plots/figure1.png');
+saveas(gcf, '../../PIG-calving-melt-response/figures/figureA_maps_and_ridge_gap.png');
 end

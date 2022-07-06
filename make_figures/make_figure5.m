@@ -533,9 +533,7 @@ end %end loop over runs
 %
 set(gcf, 'color', 'w')
 if save_flag
-%saveas(gcf, "plots/figure5", 'epsc')
-
-saveas(gcf, "plots/figure5.png")
+saveas(gcf, '../../PIG-calving-melt-response-tex/figures/figureE_melt_response_sections_P600_W100');
 end
 end %end option 2 if 0/1 statement
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

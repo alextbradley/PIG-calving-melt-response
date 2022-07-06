@@ -475,8 +475,7 @@ txt(6) = text(-12,-596, '(e)', 'Interpreter', 'latex', 'FontSize',  12);
 % Save
 %
 if save_flag
-%saveas(gcf, "plots/figure3", 'epsc')
-saveas(gcf, "plots/figure3.png")
+saveas(gcf, '../../PIG-calving-melt-response-tex/figures/figureC_baseline.png')
 end
 
 

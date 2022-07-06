@@ -270,8 +270,7 @@ axb2.XLabel.FontSize = ax_fontsize;
 % Save figure
 %
 if save_flag
-%saveas(gcf, "plots/figure4", 'epsc')
-saveas(gcf, "plots/figure4.png")
+saveas(gcf, '../../PIG-calving-melt-response-tex/figures/figureD_baseline_decomposition.png')
 end
 
 % % if you'd like to plot f/h for each of the situations
