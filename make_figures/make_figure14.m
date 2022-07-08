@@ -1,4 +1,4 @@
-%Make figure 14 of the PIG calving manuscript: mean melt rate, millgate decomposition for the two regions. Neeed to run make_figure10 first to get the 'snap distance'
+%Make figure 14 of the PIG calving manuscript: mean melt rate, millgate decomposition for the two regions. Neeed to run make_figure11 first to get the 'snap distance'
 
 
 % NB: Many of the data files referred to in this script are too large to be hosted online. These files are hosted internally as BAS.
@@ -137,9 +137,12 @@ end
 %
 % Plots
 %
-positions = [0.1,0.1,0.4,0.85;
-             0.6, 0.55, 0.38, 0.4;
-             0.6, 0.1, 0.38, 0.4];
+
+positions = [0.13, 0.72, 0.3346, 0.245;   %north obox melt rate
+	     0.57, 0.5838, 0.3346, 0.3412;  
+	     0.13, 0.40, 0.3347, 0.245;     %south box melt rate
+	     0.57, 0.11, 0.3347, 0.3412;
+	     0.13, 0.08, 0.3346, 0.245];   %perc change
 
 
 realistic_inner_cavity_definition; %bring inner cavity definition into scope
@@ -154,11 +157,11 @@ melt = cell2mat(melt_scenarios(i));
 ave_melt1(i) = mean(melt(idx1));
 ave_melt2(i) = mean(melt(idx2));
 end
-ax(1) = subplot(2,2,1); hold on; box on; grid on
+ax(1) = subplot('Position',positions(1,:)); hold on; box on; grid on
 plot(snap_distance(4)*ones(1,2)/1e3, [0, 100], 'k--', 'HandleVisibility', 'off')
 plot(snap_distance/1e3, ave_melt1, 'o-', 'color', plotcolor2, 'markerfacecolor', plotcolor2);
 
-ax(3) = subplot(2,2,3); hold on; box on; grid on
+ax(3) = subplot('Position', positions(3,:)); hold on; box on; grid on
 plot(snap_distance(4)*ones(1,2)/1e3, [0, 100], 'k--', 'HandleVisibility', 'off')
 plot(snap_distance/1e3, ave_melt2, 'o-', 'color', plotcolor3, 'markerfacecolor', plotcolor3);
 
@@ -169,23 +172,26 @@ ax(3).YLim = [72, 77];
 ax(3).YTick = 72:77;
 ax(1).XLabel.String = '$l_c$ (km)';
 ax(3).XLabel.String = '$l_c$ (km)';
+%ax(1).XTickLabels = {};
+%ax(3).XTickLabels = {};
 ax(1).YLabel.Interpreter = 'latex';
 ax(1).XLabel.Interpreter = 'latex';
 ax(3).YLabel.Interpreter = 'latex';
 ax(3).XLabel.Interpreter = 'latex';
+%ax(1).YLabel.String = '$\bar{\dot{m}}$ (m/yr)';
+%ax(3).YLabel.String = '$\bar{\dot{m}}$ (m/yr)';
 ax(1).YLabel.String = 'mean melt rate (m/yr)';
 ax(3).YLabel.String = 'mean melt rate (m/yr)';
 ax(1).XLabel.FontSize = 12;
 ax(1).YLabel.FontSize = 12;
 ax(3).XLabel.FontSize = 12;
 ax(3).YLabel.FontSize = 12;
-tN = text(ax(1), 37.5, 39.4, "north box", "Interpreter", "latex", "FontSize", 14, "Color", 'k');
-tS = text(ax(3), 1, 76.4, "south box", "Interpreter", "latex", "FontSize", 14, "Color", 'k');
-txt2009 = text(ax(1), 1.5,39.3, '2009', 'Interpreter', 'latex', 'FontSize', 10, 'rotation', 90);
-txt2020 = text(ax(1), 18, 39.7, '2020', 'Interpreter', 'latex', 'FontSize', 10, 'rotation', 90);
-
-txt2009a = text(ax(3), 1.5, 72.6, '2009', 'Interpreter', 'latex', 'FontSize', 10, 'rotation', 90);
-txt2020a = text(ax(3), 18, 74.4, '2020', 'Interpreter', 'latex', 'FontSize', 10, 'rotation', 90);
+tN = text(ax(1), 1, 43.5, "northern region", "Interpreter", "latex", "FontSize", 12, "Color", 'k');
+tS = text(ax(3), 1, 76.5, "southern region", "Interpreter", "latex", "FontSize", 12, "Color", 'k');
+%txt2009 = text(ax(1), 1.5,39.3, '2009', 'Interpreter', 'latex', 'FontSize', 10, 'rotation', 90);
+%txt2020 = text(ax(1), 18, 39.7, '2020', 'Interpreter', 'latex', 'FontSize', 10, 'rotation', 90);
+%txt2009a = text(ax(3), 1.5, 72.6, '2009', 'Interpreter', 'latex', 'FontSize', 10, 'rotation', 90);
+%txt2020a = text(ax(3), 18, 74.4, '2020', 'Interpreter', 'latex', 'FontSize', 10, 'rotation', 90);
 
 
 %
@@ -231,13 +237,14 @@ end
 
 plot_defaults %rerun to return to default colours
 for p = 1:2
-ax(2*p) = subplot(2,2,2*p); hold on;box on; grid on;
+ax(2*p) = subplot('Position', positions(2*p,:)); hold on;box on; grid on;
 plot(snap_distance(4)*ones(1,2)/1e3, [0.95, 1.15], 'k--', 'HandleVisibility', 'off')
 plot(snap_distance/1e3, relmelt(p,:), 'o-', 'color', plotcolor1, 'markerfacecolor', plotcolor1);
 plot(snap_distance/1e3, relmelt_noTemp(p,:), 'o-', 'color', plotcolor2, 'markerfacecolor', plotcolor2);
 plot(snap_distance/1e3, relmelt_noVel(p,:), 'o-', 'color', plotcolor3, 'markerfacecolor', plotcolor3);
 end
 l = legend(ax(2), {"$\mathcal{M}$", "$U_e$", "$\Delta T_e$"}, 'location', 'northwest','interpreter', 'latex', 'FontSize', 12);
+l.Position = [ 0.5794    0.6919    0.0735    0.1159];
 
 ax(2).YLim = [0.98, 1.15];
 ax(4).YLim = [0.98, 1.08];
@@ -256,28 +263,33 @@ ax(4).YLabel.FontSize = 12;
 
 
 %plot labels
-ta = text(ax(1), -10, 44.4, '(a)', 'Interpreter', 'latex', 'FontSize', 12);
-tb = text(ax(2), -10, 1.166, '(b)', 'Interpreter', 'latex', 'FontSize', 12);
-tc = text(ax(3), -10, 77.4, '(c)', 'Interpreter', 'latex', 'FontSize', 12);
-td = text(ax(4), -10, 1.09, '(d)', 'Interpreter', 'latex', 'FontSize', 12);
+ta = text(ax(1), -10, 44, '(a)', 'Interpreter', 'latex', 'FontSize', 12);
+tb = text(ax(2), -10, 1.166, '(d)', 'Interpreter', 'latex', 'FontSize', 12);
+tc = text(ax(3), -10, 77, '(b)', 'Interpreter', 'latex', 'FontSize', 12);
+td = text(ax(4), -10, 1.09, '(e)', 'Interpreter', 'latex', 'FontSize', 12);
 
-% add the inset with the % change in melt rate
-axnew = axes;
+tN2 = text(ax(2), 1, 1.137, "northern region", "Interpreter", "latex", "FontSize", 12, "Color", 'k');
+tS2 = text(ax(4), 1, 1.073, "southern region", "Interpreter", "latex", "FontSize", 12, "Color", 'k');
+
+% final subplot: % change in melt rate
+ax(5) = subplot('Position', positions(5,:));
 hold on; box on;
-axnew.Position= [0.17, 0.75, 0.12, 0.15];
 s1 = sum(sum(idx1)); s2 = sum(sum(idx2)); st = s1 + s2;
 pc1 = (ave_melt1 - ave_melt1(1)) / ave_melt1(1) * 100; %percetnage change in box north
 pc2 = (ave_melt2 - ave_melt2(1)) / ave_melt2(1) * 100; %south box
 pct = pc1 * (s1 / (s1 + s2)) + pc2 * (s2 / (s1 + s2)); %weighted percentage change (mean in inner cavity)
-ms = 2;
-plot(snap_distance/1e3, pc1, 'co-', 'MarkerSize', ms, 'MarkerFaceColor', 'c');
-plot(snap_distance/1e3, pc2, 'mo-', 'MarkerSize', ms, 'MarkerFaceColor', 'm');
-plot(snap_distance/1e3, pct, 'ko-', 'MarkerSize', ms, 'MarkerFaceColor', 'k');
+ms = 4;
+plot(ax(5),snap_distance/1e3, pc1, 'co-', 'MarkerSize', ms, 'MarkerFaceColor', 'c');
+plot(ax(5),snap_distance/1e3, pc2, 'mo-', 'MarkerSize', ms, 'MarkerFaceColor', 'm');
+plot(ax(5),snap_distance/1e3, pct, 'ko-', 'MarkerSize', ms, 'MarkerFaceColor', 'k');
 xlim([0, 50])
 xlabel('$\ell_c$ (km)', 'Interpreter', 'latex');
 ylabel('perc. change', 'Interpreter', 'latex');
-
-
+grid on
+ax(5).XLabel.FontSize = 12;
+ax(5).YLabel.FontSize = 12;
+plot(snap_distance(4)*ones(1,2)/1e3, [0, 15], 'k--', 'HandleVisibility', 'off')
+te = text(ax(5), -10, 15, '(c)', 'Interpreter', 'latex', 'FontSize', 12);
 
 
 %
