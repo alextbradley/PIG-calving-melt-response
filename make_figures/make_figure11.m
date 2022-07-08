@@ -87,7 +87,6 @@ sline =  sqrt((x(xline_idx) - x(xline_idx(1))).^2 + (y(yline_idx) - y(yline_idx(
 hold on
 xline = x(xline_idx);
 yline = y(yline_idx);
-plot(xline, yline, 'k--')
 
 %compute distance along line
 snap_distance = zeros(1,6);
@@ -195,27 +194,23 @@ plot(cl_image(1,:), cl_image(2,:), 'b--');
 %add the north south cross section lines
 clN = [xlineN; ylineN];
 cl_imageN = model2image(clN);
-plot(cl_imageN(1,:), cl_imageN(2,:), '--', 'color', 0.6*[1,1,1]);
+%plot(cl_imageN(1,:), cl_imageN(2,:), '--', 'color', 0.6*[1,1,1]);
 clS = [xlineS; ylineS];
 cl_imageS = model2image(clS);
-plot(cl_imageS(1,:), cl_imageS(2,:), '--','color', 0.6*[1,1,1]);
+%plot(cl_imageS(1,:), cl_imageS(2,:), '--','color', 0.6*[1,1,1]);
 
 %add the calving front measurement positions
 csnap = [xsnap; ysnap];
 csnap_image = model2image(csnap);
 plot(csnap_image(1,:), csnap_image(2,:), 'ko', 'markerfacecolor', 'k');
 
-%add the ridge cross section
-cx = [xcross; ycross];
-cx_image = model2image(cx);
-plot(cx_image(1,:), cx_image(2,:), 'k--')
-
 %add the inner cavity definition
 cin1_img = model2image(cin1); 
 cin2_img = model2image(cin2);
 plot(cin1_img(1,:), cin1_img(2,:), '--','color', plotcolor2);
 plot(cin2_img(1,:), cin2_img(2,:), '--', 'color',plotcolor3);
-
+fill(cin1_img(1,:), cin1_img(2,:), 'c', 'LineStyle', 'none', 'FaceAlpha', 0.5)
+fill(cin2_img(1,:), cin2_img(2,:), 'm', 'LineStyle', 'none', 'FaceAlpha', 0.5)
 
 %tidy plot
 ylim([2194, 14847])
@@ -226,48 +221,12 @@ camroll(-90);
 
 %add the A,B pts and 2009, 2020 front labels
 ax1 = gca;
-ptAA = text(ax1,9800,8000, 'A', 'FontSize', 12, 'FontWeight', 'bold');
-ptBB = text(ax1, 4300,8800, 'B', 'FontSize', 12, 'FontWeight', 'bold');
 txtN = text(ax1, 5200, 6400, 'North', 'FontSize', 12, 'Interpreter', 'latex');
 txtS = text(ax1, 8700, 6000, 'South', 'FontSize', 12, 'Interpreter', 'latex');
-f2009 = text(ax1, 4000,13200, '2009', 'FontSize',12, 'color', colmap(1,:));
-f2020 = text(ax1, 7500,11700, '2020', 'FontSize',12, 'color', colmap(2,:));
+%f2009 = text(ax1, 4000,13200, '2009', 'FontSize',12, 'color', colmap(1,:));
+%f2020 = text(ax1, 7500,11700, '2020', 'FontSize',12, 'color', colmap(2,:));
 
 
-
-%add the gap width as inset axes
-topo = cell2mat(topo_scenarios(1));
-bathyline = nan(1,length(ycrossidx));
-topoline  = nan(1,length(ycrossidx));
-sline =  sqrt((x(xcrossidx) - x(xcrossidx(1))).^2 + (y(ycrossidx) - y(ycrossidx(1))).^2); %arclength along line
-
-for i = 1:length(bathyline)
-if bathy(xcrossidx(i), ycrossidx(i)) ~=0
-bathyline(i) = bathy(xcrossidx(i), ycrossidx(i));
-end
-if topo(xcrossidx(i), ycrossidx(i)) ~=0
-topoline(i)  = topo(xcrossidx(i), ycrossidx(i));
-end
-end
-idx = ~isnan(bathyline);
-sline = sline(idx);
-sline = sline - sline(1);
-bathyline = bathyline(idx);
-topoline = topoline(idx);
-ax2 = axes; hold on; box on
-ax2.Position = [0.55, 0.07, 0.3, 0.2];
-fill(ax2,[0, 22, 22, 0], [0, 0, 400, 400], 'm','linestyle', 'none', 'FaceAlpha', 0.3);
-fill(ax2,[22, 45, 45, 22], [0, 0, 400, 400], 'c','linestyle', 'none', 'FaceAlpha', 0.3);
-plot(ax2,sline/1e3,topoline - bathyline, 'color', 'k', 'linewidth', 2);
-
-ax2.XLabel.String = 'distance (km)';
-ax2.YLabel.String = 'gap (m)';
-ax2.XLabel.Interpreter = 'latex';
-ax2.XLabel.FontSize = 12;
-ax2.YLabel.Interpreter = 'latex';
-ax2.YLabel.FontSize = 12;
-ptA2 = text(ax2, 0.5,30, 'A', 'FontSize', 10, 'FontWeight', 'bold');
-ptB2 = text(ax2, 42.2,30, 'B', 'FontSize', 10, 'FontWeight', 'bold');
 
 %
 % Make a second figure with the 1/h contours
@@ -289,12 +248,13 @@ gap(bathy == 0) = nan;
 invgap = (1./gap);
 invgap = saturate(invgap, 0.01,0);
 hold on
+
 contourf(xi, yi, invgap', 30, 'linestyle', 'none');
 d = colorbar;
 d.Label.String = '$1/h$ (m\textsuperscript{-1})';
 d.Label.Interpreter = 'latex';
 d.Label.FontSize = 12;
-d.Position = [0.85, 0.28, 0.03, 0.5];
+d.Position = [0.87, 0.35, 0.03, 0.5];
 
 
 ax = gca;
@@ -319,8 +279,50 @@ plot(ax,cin2_img(1,:), cin2_img(2,:), '--', 'color',plotcolor3);
 ylim([2194, 14847])
 xlim([2000,12000])
 
+%add the cross section line
+cx = [xcross; ycross];
+cx_image = model2image(cx);
+plot(cx_image(1,:), cx_image(2,:), 'k--')
+
+ptAA = text(ax,9800,8000, 'A', 'FontSize', 12, 'FontWeight', 'bold');
+ptBB = text(ax, 4300,8800, 'B', 'FontSize', 12, 'FontWeight', 'bold');
 %rotate
 camroll(-90);
+
+%add the gap width as inset axes
+topo = cell2mat(topo_scenarios(1));
+bathyline = nan(1,length(ycrossidx));
+topoline  = nan(1,length(ycrossidx));
+sline =  sqrt((x(xcrossidx) - x(xcrossidx(1))).^2 + (y(ycrossidx) - y(ycrossidx(1))).^2); %arclength along line
+
+for i = 1:length(bathyline)
+if bathy(xcrossidx(i), ycrossidx(i)) ~=0
+bathyline(i) = bathy(xcrossidx(i), ycrossidx(i));
+end
+if topo(xcrossidx(i), ycrossidx(i)) ~=0
+topoline(i)  = topo(xcrossidx(i), ycrossidx(i));
+end
+end
+idx = ~isnan(bathyline);
+sline = sline(idx);
+sline = sline - sline(1);
+bathyline = bathyline(idx);
+topoline = topoline(idx);
+ax2 = axes; hold on; box on
+ax2.Position = [0.65, 0.06, 0.3, 0.2];
+fill(ax2,[0, 22, 22, 0], [0, 0, 400, 400], 'm','linestyle', 'none', 'FaceAlpha', 0.3);
+fill(ax2,[22, 45, 45, 22], [0, 0, 400, 400], 'c','linestyle', 'none', 'FaceAlpha', 0.3);
+plot(ax2,sline/1e3,topoline - bathyline, 'color', 'k', 'linewidth', 2);
+
+ax2.XLabel.String = 'distance (km)';
+ax2.YLabel.String = 'gap (m)';
+ax2.XLabel.Interpreter = 'latex';
+ax2.XLabel.FontSize = 12;
+ax2.YLabel.Interpreter = 'latex';
+ax2.YLabel.FontSize = 12;
+ax2.XLim = [0,45];
+ptA2 = text(ax2, 0.5,30, 'A', 'FontSize', 10, 'FontWeight', 'bold');
+ptB2 = text(ax2, 42.2,30, 'B', 'FontSize', 10, 'FontWeight', 'bold');
 
 
 %
