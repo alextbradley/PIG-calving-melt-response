@@ -208,3 +208,27 @@ fig = gcf; fig.Position(3:4) = [790, 500];
 set(gcf, 'color', 'w');
 for i = 1:6; axs(i).FontSize = 7.5;end
 
+%
+% Make the colorbars
+%
+figure();
+ax = gca; ax.Visible = 'off';
+
+cn = colorbar;
+colormap(ax,redblue);
+cn.Position(3) = 0.02;
+cn.Ticks = [0,0.25,0.5,0.75,1];
+cn.TickLabels = {"-20", "-10", "0", "10", "20"};
+axnew = axes; axnew.Visible = 'off';
+c = colorbar;
+colormap(axnew,cmap);
+c.Position(3) = 0.02;
+c.Ticks = 0:0.25:1;
+c.TickLabels = {'0', '25', '50', '75', '>100'};
+c.Position(1) = cn.Position(1) - 0.02;
+cbar_handle = findobj(gcf,'tag','Colorbar')
+set(cbar_handle(1), 'YAxisLocation','left')
+
+
+
+
