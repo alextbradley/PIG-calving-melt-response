@@ -114,19 +114,16 @@ end
 snap_distance = snap_distance - snap_distance(1); %take relative to 2012 topo
 
 %get inner cavity contours
-realistic_inner_cavity_definition; %bring inner cavity definition into scope (a1,b1,a2,b2)
+cav_def; %bring inner cavity definition into scope (a1,b1,a2,b2)
 in1 = inpolygon(XX',YY', a1,b1);
 in2 = inpolygon(XX',YY', a2,b2);
 idx1 = (topo < 0) & in1;
 idx2 = (topo < 0) & in2;
+idx = ( idx1 | idx2);
 A = zeros(nx,ny);
-A(idx1) = 1;
-[cin1,~] = contour(x,y, A',[1,1], 'linestyle', 'none');
-cin1 = cin1(:, (cin1(1,:)~=1)); %remove levels
-A(idx2) = 1;
-A(~idx2) = 0;
-[cin2,~] = contour(x,y, A',[1,1], 'linestyle', 'none');
-cin2 = cin2(:, (cin2(1,:)~=1)); %remove levels
+A(idx) = 1;
+[cin,~] = contour(x,y, A',[1,1], 'linestyle', 'none');
+cin = cin(:, (cin(1,:)~=1)); %remove levels
 
 
 
@@ -166,12 +163,8 @@ cl_image = model2image(cl);
 plot(cl_image(1,:), cl_image(2,:), 'k--', 'linewidth', 1.5);
 
 %add the inner cavity definition
-cin1_img = model2image(cin1);
-cin2_img = model2image(cin2);
-%plot(cin1_img(1,:), cin1_img(2,:), '--','color', plotcolor2);
-%plot(cin2_img(1,:), cin2_img(2,:), '--', 'color',plotcolor3);
-f(1) = fill(cin1_img(1,:), cin1_img(2,:), 'm', 'FaceAlpha', 0.5, 'LineStyle', 'none');
-f(2) = fill(cin2_img(1,:), cin2_img(2,:), 'm' , 'FaceAlpha', 0.5, 'LineStyle', 'none');
+cin_img = model2image(cin);
+f(1) = fill(cin_img(1,:), cin_img(2,:), 'm', 'FaceAlpha', 0.5, 'LineStyle', 'none');
 
 
 %tidy plot
