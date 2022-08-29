@@ -1,9 +1,9 @@
 %!PS-Adobe-3.0 EPSF-3.0
 %%Creator: (MATLAB, The Mathworks, Inc. Version 9.9.0.1495850 \(R2020b\) Update 1. Operating System: Linux)
 %%Title: ./cbar.epsc
-%%CreationDate: 2022-08-29T12:44:56
+%%CreationDate: 2022-08-29T12:49:06
 %%Pages: (atend)
-%%BoundingBox:   316    31   380   299
+%%BoundingBox:   308    31   388   299
 %%LanguageLevel: 3
 %%EndComments
 %%BeginProlog
@@ -390,7 +390,7 @@ GS
 0.66 LW
 N
 466 374 M
-477 374 L
+488 374 L
 S
 GR
 GS
@@ -401,7 +401,7 @@ GS
 0.66 LW
 N
 466 31 M
-477 31 L
+488 31 L
 S
 GR
 GS
@@ -422,8 +422,8 @@ GS
 1 LJ
 0.66 LW
 N
-477 374 M
-477 31 L
+488 374 M
+488 31 L
 S
 GR
 GS
@@ -431,14 +431,14 @@ GS
 [1 0 0 1 0 0] CT
 N
 0 686 M
-22 686 L
-22 0 L
+44 686 L
+44 0 L
 0 0 L
 cp
 clip
 GS
 0 0 translate
-22 686 scale
+44 686 scale
 %AXGBeginBitmap: java.awt.image.BufferedImage
 {{
 /RawData currentfile /ASCII85Decode filter def
@@ -449,28 +449,29 @@ GS
   /Decode [0 1 0 1 0 1]
   /DataSource Data
   /Height 686
-  /ImageMatrix [22 0 0 686 0 0]
-  /Width 22
+  /ImageMatrix [44 0 0 686 0 0]
+  /Width 44
   /BitsPerComponent 8
 >> image
 } stopped {handleerror} if
   RawData flushfile
 } exec
-Gb"0W!Cs4g'SYKk8MZHk,Y=.R16NnS7P^,P8Wk>jOsEV^7$8feOsEV^,Y=.E8Wk>jOsEV^,Y=.El(0!%
-H!0Q[r]t/m^2s!SlRsgU:I'07Jqs[9Ocd;T-jA#G$=[Ih*fkp*=9W\a4KhgPI(Y&a"C>Q3JtsXqaiV2[
-'EtJ8$I[@Il0/P&4p?C"0-`hM+J9i5PF%Q2+?Ndn:6'q]>[Ca.K)C!""U2PH:dJN`JtaGq.&<NG=@#Lb
-YI%7p=dam4EaD1gK$$[h<E6]sC'?IP$>O@%F`e&VlP265n/<5\1c6^qDH>-4_J=!gd+5(e]q*d&TqJ_j
-6!"l+]3@QsO+Q4p?=0=VrdG"Q"2)H9"[bWaL51%!,76n1'o\.B`lAff9IQ9uj@r>tR%@>41S\?$Q8^b#
-@")Fu_?+Xq;8L\DK&pS#b)1f$<<[/R]_-CN)]K,B2gJV3$F[DYm-O4bG89K3.G3P@*?6Ie4B-9A`&g.`
-E,q]2oMiZ[)=RK._8V+[b=g^BQ%J=;"ZJBQgKOi*G7*d,Gn1Dm*Zl+Z4n5,9'th1-G^\\e]d\2U=7Gar
-qtsF_oqgUDS+lNLi:g<hs,YP4s%Afr^JuWM?T8;jV)Nu*f/8+D!BKq=TF(Oqg][V2jPXs6-LeKf'DMlk
-K:aEW^eaVsi$YT9IaW$65P6sdhnV5H9p>t^<mUtu6gNYheL'db!>G52LP&C.R)#VW9]-Rj-Lb_2#G4%6
-JPUfb^o)/mHn*gf/j1@q!h\%fn>uj-p]cQ]I%/0m\!g"K)eLGdD*J9_H8L1kTUN[*JK9+gg'#-`D?<TA
-E:D?['6o+_#s:r#_,F?-i!D=hn?a>PGk.&N-X`@Xe&Y5@a`%`]OCnVj.l;f)7lkmHV?oB0e-)?olei)]
--LeBP'6s)TK-tW-^sgY)i5tU$T$VBWDbDd82cht`K80cG9uR7lCuaF_5:5m.,nkOpPmP*Wbe`&d9]40?
--Ld<f#B+B7JN%51^fsJQ]Znt0hQ1JoD`N"1[V$7uo<nt<"l7#Li(\kk$As^cKnTkc5m7Dq]_m-\H$Ka;
-F*Tc+$F6uQA7[42biAp/$8O@Nq#*=I:I0<<K![@@C8ulM'EuV#]VHeVM2;QP&pWs:$G9[KEH/YD=9Tb,
-Js[B]FL6Xu-j>`q]SHgsiSb-\_Kc(\.W'G&~>
+Gb"0W@7Qnt(rl(k8Wk>jOsEV^,Y=.E8Wk>jOsEV^,Y8V?OsEV^,Y=.E8S4,21J'>X1Qs(?1W`=R9QRqY
+^;>0.pg8JWiGmc$I@]P@]L>6$5t#6/<('/@7<C@[9FOn=`^3+!*)(`B<$W_S7:IH7;A)qS-UU<p$;>1a
+<2??V7=%!g7Kuh&AjSpe(//m0<93+*7;a_O?63),k<h[(!DHoF<"p'57<(%]Pa&tJQ9n#C),uie_c0T#
+7:dcE<)pb6=$oDN%91j._UR+%7=@<u1c3!)2F9i2'3$eI_mHd97;FDQ['d`W[mNSS#?5eg_K9od7<^[i
+o^kC;D_Fdk+&qn,6cHh@bhsUC$k5MAn1`)-#ZQbC6H.RobkO.s9M@^jj<Vt!'N@b%6cI7Xbj6l[bfrGm
+r&i3?!`U^'6H.@cbjmMgXK4\+l7,c7Xhh*B6cI%L<,?HhCi)JWp,5n:m(huU6H.e&<:'(k*#q5_i?;/?
+*PoC8#8Q^b6cJRMbfL/jS=W'dfbr$03E1D$!#6S?_H^>2`T8CF>[9Y7oejsk:JgTW1K8bt!qZ(8<.+QI
+(#QdDgtY06m4D;mh8.n(6cG*.;"=-)bcbAMnbY7E4?UDA5!m5\5>^nE0?hlY<'3B4`QJY5lRPs4qZdiU
+NnA@O9d"D)<Zl@2LD&SF:6!'f^Es$VD_NBj^W@X<s&P,pr=2>Nqjec0pUb;GmP>t0gh23M\Bi;@E1\9g
+iBC2!^jXcTJboq7#ksl8"R`mJ#i'W+7C_eC,B2Q58)Tti+i6AU"bD#$&-DS7/HkLpE[';F"qe@XE$B8I
+VA8']<K,kS42W"gHa^TnpT=T$mN!DUgq.Po\9B5BE:4?*i81R`_S'^sJU7VN!r$S=&airL#i%Mc&Su@%
+ChuAUqDqTWXhh*A6H.(S<%K[i`R5CCiZ_>Q/3q2P4NuS#<6WWS`QSb7oJBN@9gQbZ,g=10</cl*`Rl$O
+kU9DhN'PAO0[.lT<"'7'`P;IIIm6p)og)#b02,.P<-3=O79::)FEYNCF?i9A4&iSp_6gX;78""f1cN</
+2*jZ@,?-KV^spt'79pp5eCMLde3HHF2,mOT_,OH%77@AZPaB:PPsIiQ.9)Or^_@SP78XXr'Ga#(5ljZ.
+5#gV)5t,ZD9MQ'sA7n7u<YeA@-<+Md5Xfu[9Ni?6Uo$II8d\741/oMF5t,6,9L8e[`5b56>T?FR/6'R+
+5XfcO9N2^*6q0L36j1_`UDNI`~>
 
 %AXGEndBitmap
 GR
@@ -482,8 +483,8 @@ GS
 1 LJ
 0.66 LW
 N
-477 374 M
-477 31 L
+488 374 M
+488 31 L
 S
 GR
 GS
@@ -493,8 +494,8 @@ GS
 1 LJ
 0.66 LW
 N
-477 374 M
-473.57 374 L
+488 374 M
+484.57 374 L
 S
 GR
 GS
@@ -504,8 +505,8 @@ GS
 1 LJ
 0.66 LW
 N
-477 288.25 M
-473.57 288.25 L
+488 288.25 M
+484.57 288.25 L
 S
 GR
 GS
@@ -515,8 +516,8 @@ GS
 1 LJ
 0.66 LW
 N
-477 202.5 M
-473.57 202.5 L
+488 202.5 M
+484.57 202.5 L
 S
 GR
 GS
@@ -526,8 +527,8 @@ GS
 1 LJ
 0.66 LW
 N
-477 116.75 M
-473.57 116.75 L
+488 116.75 M
+484.57 116.75 L
 S
 GR
 GS
@@ -537,12 +538,12 @@ GS
 1 LJ
 0.66 LW
 N
-477 31 M
-473.57 31 L
+488 31 M
+484.57 31 L
 S
 GR
 GS
-[0.75789 0 0 0.75789 365.31579 283.13684] CT
+[0.75789 0 0 0.75789 373.65263 283.13684] CT
 0.149 GC
 /Helvetica 11.875 F
 GS
@@ -553,7 +554,7 @@ GS
 GR
 GR
 GS
-[0.75789 0 0 0.75789 365.31579 218.14738] CT
+[0.75789 0 0 0.75789 373.65263 218.14738] CT
 0.149 GC
 /Helvetica 11.875 F
 GS
@@ -564,7 +565,7 @@ GS
 GR
 GR
 GS
-[0.75789 0 0 0.75789 365.31579 153.15791] CT
+[0.75789 0 0 0.75789 373.65263 153.15791] CT
 0.149 GC
 /Helvetica 11.875 F
 GS
@@ -575,7 +576,7 @@ GS
 GR
 GR
 GS
-[0.75789 0 0 0.75789 365.31579 88.16844] CT
+[0.75789 0 0 0.75789 373.65263 88.16844] CT
 0.149 GC
 /Helvetica 11.875 F
 GS
@@ -586,7 +587,7 @@ GS
 GR
 GR
 GS
-[0.75789 0 0 0.75789 365.31579 23.17897] CT
+[0.75789 0 0 0.75789 373.65263 23.17897] CT
 0.149 GC
 /Helvetica 11.875 F
 GS
@@ -604,7 +605,7 @@ GS
 0.66 LW
 N
 466 31 M
-477 31 L
+488 31 L
 S
 GR
 GS
@@ -615,7 +616,7 @@ GS
 0.66 LW
 N
 466 374 M
-477 374 L
+488 374 L
 S
 GR
 GS
@@ -636,8 +637,8 @@ GS
 1 LJ
 0.66 LW
 N
-477 374 M
-477 31 L
+488 374 M
+488 31 L
 S
 GR
 GS
@@ -669,8 +670,8 @@ GS
 1 LJ
 0.66 LW
 N
-477 374 M
-477 374 L
+488 374 M
+488 374 L
 S
 GR
 GS
@@ -680,8 +681,8 @@ GS
 1 LJ
 0.66 LW
 N
-477 31 M
-477 31 L
+488 31 M
+488 31 L
 S
 GR
 GS
@@ -691,7 +692,7 @@ GS
 1 LJ
 0.66 LW
 N
-455 374 M
+444 374 M
 466 374 L
 S
 GR
@@ -702,7 +703,7 @@ GS
 1 LJ
 0.66 LW
 N
-455 31 M
+444 31 M
 466 31 L
 S
 GR
@@ -713,8 +714,8 @@ GS
 1 LJ
 0.66 LW
 N
-455 374 M
-455 31 L
+444 374 M
+444 31 L
 S
 GR
 GS
@@ -729,18 +730,18 @@ N
 S
 GR
 GS
-[0.37895 0 0 0.37895 344.8421 23.17897] CT
+[0.37895 0 0 0.37895 336.50526 23.17897] CT
 [1 0 0 1 0 0] CT
 N
 0 686 M
-22 686 L
-22 0 L
+44 686 L
+44 0 L
 0 0 L
 cp
 clip
 GS
 0 0 translate
-22 686 scale
+44 686 scale
 %AXGBeginBitmap: java.awt.image.BufferedImage
 {{
 /RawData currentfile /ASCII85Decode filter def
@@ -751,21 +752,22 @@ GS
   /Decode [0 1 0 1 0 1]
   /DataSource Data
   /Height 686
-  /ImageMatrix [22 0 0 686 0 0]
-  /Width 22
+  /ImageMatrix [44 0 0 686 0 0]
+  /Width 44
   /BitsPerComponent 8
 >> image
 } stopped {handleerror} if
   RawData flushfile
 } exec
-Gb"0<btHLd*67U7&=kp`'O_Nn=tQ:W%*NT(AdaP-Jd8!b6W"EI+i6T4j<645!f91"JfZ=l&OIAajj:E4
-qcOpJKL@)F'RR(4brN6op&4h"+5SYWg"a.iq>Xo9,AAr`MCC>E\!=<.hb'hgg-`HL]TehUfKn68R#a#/
-USXd2NVFrDq0`E\o;P@1(6S^`N:/(KZ"hG*7r(Z-'F@\"I&*4<59g3OSEVIMm:>Z<arH?-,jiY(?HRX3
-,Me3*+)1TVasclCRnD+`'31:m-s8pk4+i;:ZX]r*[+A1bP^15^,&OC09URKMVb)5M\:l\63#>-?kZf>!
-;5]C/lVd,G%1_3eb^G,Q8/lg.8X[1(pIOV25GV!1^f/[-qSSQ.3S$XQomPY\=VU6HmHWOFBidd`Pe#dR
-P-h:$*QhXYiWEnQ\je)hmIO3'D?t`dbY?F'8R)+'Jhjetr_2$_&#Lb]jSftDHL?5.mIngCb4OP^-*=B2
-4(X`7S0Mn(p#"9P^-Gm%eI6#T[q/-8EB-OWHS-q7[]6`#RJY>1-#N,kkrs@#5af#mnt`BL8Y(X+QUr,W
-^-nMdMkiMaR&8/`H.%--(Nn=/+DiM`9:`K>V#.qQAc;f#MH>E~>
+Gb"0<bA.Ug)usptjQ(tbo11[Wk10%F,%c]P<XpY&JLJK'EhHqJ7>[1lM"6AOP4E:F`QZu\j$5&V4>P1Y
+Z'dcM#JP]'p[J"Nl0]GGXW%/e2+fa]os71`\F\H7eaW$''@_uqMcJg+9%8MU?VaQ/GJ,P-'CL<5<AiS'
+Zs6>8p[N@UE*q?neSp"RKpm#Q*7];_4>l*3`W`C$^C?HC_S7#OWJ8/G<2^+Q]KT%Ir:\,E2;sm]P?#NH
+DO.4-5AF)U\(iT9%H"`qVC$]PmS)/MIEQFaiA7SD<5ZcE02WBHoO,4EG[F[7Rdf`3X_N*-@BH!fk(amT
+_s8C^<YJe<fVTQn<S48h?;[Y"'<Z*)WuA-gE'R-Bmet&'iJMtPeV%SBS59Z]2kO+a0"l=42-bO@?;5Z<
+dj<Q6Lg*s2KSMHl<t,\SdA.[%f[-]H4Q'DDC3\+UJsu1jb>2*T6SCT&'-;>e\S?A"r<kLAd2-,gL5X?j
+<YHO$p5Ng3r2FmT_@o\Y<t,rfs.C:%Gk@c"E644PeSscHcYC<q%t7FdQgOgHB"[lIC:JXeQ^[EN\o-'f
+oNaUp_R"FXWeP/)moL0o^\+46\8mLBI*ng?2;uLnqc(I5ldUl[Y3f3u=0MV(AmG4'28!a*Vj_VM0@fj?
+mqTkc^SlmfX#ngi(UpHb(VWl_rXY0#Y6=~>
 
 %AXGEndBitmap
 GR
@@ -777,8 +779,8 @@ GS
 1 LJ
 0.66 LW
 N
-455 374 M
-455 31 L
+444 374 M
+444 31 L
 S
 GR
 GS
@@ -788,8 +790,8 @@ GS
 1 LJ
 0.66 LW
 N
-455 374 M
-458.43 374 L
+444 374 M
+447.43 374 L
 S
 GR
 GS
@@ -799,8 +801,8 @@ GS
 1 LJ
 0.66 LW
 N
-455 288.25 M
-458.43 288.25 L
+444 288.25 M
+447.43 288.25 L
 S
 GR
 GS
@@ -810,8 +812,8 @@ GS
 1 LJ
 0.66 LW
 N
-455 202.5 M
-458.43 202.5 L
+444 202.5 M
+447.43 202.5 L
 S
 GR
 GS
@@ -821,8 +823,8 @@ GS
 1 LJ
 0.66 LW
 N
-455 116.75 M
-458.43 116.75 L
+444 116.75 M
+447.43 116.75 L
 S
 GR
 GS
@@ -832,12 +834,12 @@ GS
 1 LJ
 0.66 LW
 N
-455 31 M
-458.43 31 L
+444 31 M
+447.43 31 L
 S
 GR
 GS
-[0.75789 0 0 0.75789 341.04211 283.13684] CT
+[0.75789 0 0 0.75789 332.70526 283.13684] CT
 0.149 GC
 /Helvetica 11.875 F
 GS
@@ -848,7 +850,7 @@ GS
 GR
 GR
 GS
-[0.75789 0 0 0.75789 341.04211 218.14738] CT
+[0.75789 0 0 0.75789 332.70526 218.14738] CT
 0.149 GC
 /Helvetica 11.875 F
 GS
@@ -859,7 +861,7 @@ GS
 GR
 GR
 GS
-[0.75789 0 0 0.75789 341.04211 153.15791] CT
+[0.75789 0 0 0.75789 332.70526 153.15791] CT
 0.149 GC
 /Helvetica 11.875 F
 GS
@@ -870,7 +872,7 @@ GS
 GR
 GR
 GS
-[0.75789 0 0 0.75789 341.04211 88.16844] CT
+[0.75789 0 0 0.75789 332.70526 88.16844] CT
 0.149 GC
 /Helvetica 11.875 F
 GS
@@ -881,7 +883,7 @@ GS
 GR
 GR
 GS
-[0.75789 0 0 0.75789 341.04211 23.17897] CT
+[0.75789 0 0 0.75789 332.70526 23.17897] CT
 0.149 GC
 /Helvetica 11.875 F
 GS
@@ -898,7 +900,7 @@ GS
 1 LJ
 0.66 LW
 N
-455 31 M
+444 31 M
 466 31 L
 S
 GR
@@ -909,7 +911,7 @@ GS
 1 LJ
 0.66 LW
 N
-455 374 M
+444 374 M
 466 374 L
 S
 GR
@@ -920,8 +922,8 @@ GS
 1 LJ
 0.66 LW
 N
-455 374 M
-455 31 L
+444 374 M
+444 31 L
 S
 GR
 GS
@@ -942,8 +944,8 @@ GS
 1 LJ
 0.66 LW
 N
-455 374 M
-455 374 L
+444 374 M
+444 374 L
 S
 GR
 GS
@@ -953,8 +955,8 @@ GS
 1 LJ
 0.66 LW
 N
-455 31 M
-455 31 L
+444 31 M
+444 31 L
 S
 GR
 GS
